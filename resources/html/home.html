@@ -9,69 +9,77 @@
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 <body>
-<section class="section">
-    <div class="container">
-        <h1 class="title">
-            Hello World
-        </h1>
-        <p class="subtitle">
-            My first website with <strong>Bulma</strong>!
-        </p>
-    </div>
-</section>
 <div id="navbar"></div>
-<div id="raw">
+<section class="section">
     <div id="view"></div>
-    <div id="chart"></div>
-    <div class="section">
-        <div class="columns">
-            <div class="column">
-                <h3 class="title is-3">Little humans</h3>
-                <div>
-                    <h3 class="subtitle is-3">Add human</h3>
-                    <form action="/users" method="post">
-                        {% csrf-field %}
-                        <label for="name">Name</label><br>
-                        <input type="text" name="name" id="name"><br>
-                        <label for="gender">Gender</label><br>
-                        <input type="text" name="gender" id="gender">
-                        <input class="button" type="submit" value="Submit">
-                    </form>
-                </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Gender</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>{{user.name}}</td>
-                        <td>{{user.gender}}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+</section>
+<section class="section">
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-3">Little humans</h3>
+            <div>
+                <h3 class="subtitle is-3">Add human</h3>
+                <form action="/users" method="post">
+                    {% csrf-field %}
+                    <div class="field">
+                        <label class="label" for="name">Name</label>
+                        <div class="control">
+                            <input class="input" type="text" name="name" id="name" placeholder="Foo bar">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="gender">Gender</label>
+                        <div class="control">
+                            <input class="input" type="text" name="gender" id="gender" placeholder="racetrack">
+
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-link" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="column">
-                <h3 class="title is-3">Cozy cuddles</h3>
-                <div>
-                    <h3 class="subtitle is-3">Add relation</h3>
-                    <form action="/relations" method="post">
-                        {% csrf-field %}
-                        <div class="input-container">
-                            <div class="input-item">
-                                <label for="from">Person from</label><br>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Gender</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{user.name}}</td>
+                    <td>{{user.gender}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <h3 class="title is-3">Cozy cuddles</h3>
+            <div>
+                <h3 class="subtitle is-3">Add relation</h3>
+                <form action="/relations" method="post">
+                    {% csrf-field %}
+                    <div class="field">
+                        <label for="from">Person from</label>
+                        <div class="control">
+                            <div class="select">
                                 <select name="from_id" id="from">
                                     {% for user in users %}
                                     <option value="{{user.id}}">{{user.name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="input-item">
-                                <label for="to">Person to</label><br>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="to">Person to</label>
+                        <div class="control">
+                            <div class="select">
                                 <select name="to_id" id="to">
                                     {% for user in users %}
                                     <option value="{{user.id}}">{{user.name}}</option>
@@ -79,51 +87,59 @@
                                 </select>
                             </div>
                         </div>
-                        <input class="button" type="submit" value="Submit">
-                    </form>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-link" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Person 1</th>
+                    <th>Person 2</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for relation in relations %}
+                <tr>
+                    <td>{{relation.name}}</td>
+                    <td>{{relation.name_2}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<section class="section">
+    <div id="app">
+        <div class="container-fluid">
+            <div class="card-deck">
+                <div class="card-block">
+                    <h4>Welcome to cat</h4>
+                    <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
+                    <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.
+                    </p>
+                    <h4>For better ClojureScript development experience in Chrome follow these steps:</h4>
+                    <ul>
+                        <li>Open DevTools
+                        <li>Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1
+                            >
+                            General > Console)
+                        <li>Check-in "Enable custom formatters"
+                        <li>Close DevTools
+                        <li>Open DevTools
+                    </ul>
+                    <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for
+                        further details.</p>
                 </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Person 1</th>
-                        <th>Person 2</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for relation in relations %}
-                    <tr>
-                        <td>{{relation.name}}</td>
-                        <td>{{relation.name_2}}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
-</div>
-<div id="app">
-    <div class="container-fluid">
-        <div class="card-deck">
-            <div class="card-block">
-                <h4>Welcome to cat</h4>
-                <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
-                <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.</p>
-                <h4>For better ClojureScript development experience in Chrome follow these steps:</h4>
-                <ul>
-                    <li>Open DevTools
-                    <li>Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1 >
-                        General > Console)
-                    <li>Check-in "Enable custom formatters"
-                    <li>Close DevTools
-                    <li>Open DevTools
-                </ul>
-                <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for
-                    further details.</p>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 
 <!-- scripts and styles -->
 {% style "/assets/bootstrap/css/bootstrap.min.css" %}
@@ -138,8 +154,8 @@
 <script type="text/javascript">
     var csrfToken = "{{csrf-token}}";
 </script>
-{% script "/js/app.js" %}
+<!--{% script "/js/app.js" %}-->
 
-<!--{% script "/js/graphing.js" %}-->
+{% script "/js/graphing.js" %}
 </body>
 </html>
