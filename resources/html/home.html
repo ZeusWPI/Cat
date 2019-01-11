@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to cat</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@4.4.0"></script>
+</head>
+<body>
+<div id="navbar"></div>
+<div id="raw">
+    <div id="view"></div>
+    <div id="chart"></div>
+    <div class="grid-container">
+        <div class="grid-item">
+            <h3>Add person</h3>
+            <form action="/users" method="post">
+                {% csrf-field %}
+                <label for="name">Name</label><br>
+                <input type="text" name="name" id="name"><br>
+                <label for="gender">Gender</label><br>
+                <input type="text" name="gender" id="gender">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="grid-item">
+            <h3>Add relation (please enter correct id's of the person)</h3>
+            <form action="/relations" method="post">
+                {% csrf-field %}
+                <div class="input-container">
+                    <div class="input-item">
+                        <label for="from">Person from</label><br>
+                        <select name="from_id" id="from">
+                            {% for user in users %}
+                            <option value="{{user.id}}">{{user.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="input-item">
+                        <label for="to">Person to</label><br>
+                        <select name="to_id" id="to">
+                            {% for user in users %}
+                            <option value="{{user.id}}">{{user.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="grid-item">
+            <h3>Users</h3>
+            <div class="item-container">
+                <div class="item"><b>Name</b></div>
+                <div class="item"><b>Gender</b></div>
+                {% for user in users %}
+                <div class="item">
+                    {{user.name}}
+                </div>
+                <div class="item">
+                    {{user.gender}}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="grid-item">
+            <h3>Relations</h3>
+            <div class="item-container">
+                <div class="item"><b>Person 1</b></div>
+                <div class="item"><b>Person 2</b></div>
+                {% for relation in relations %}
+                <div class="item">
+                    {{relation.name}}
+                </div>
+                <div class="item">
+                    {{relation.name_2}}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<div id="app">
+    <div class="container-fluid">
+        <div class="card-deck">
+            <div class="card-block">
+                <h4>Welcome to cat</h4>
+                <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
+                <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.</p>
+                <h4>For better ClojureScript development experience in Chrome follow these steps:</h4>
+                <ul>
+                    <li>Open DevTools
+                    <li>Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1 >
+                        General > Console)
+                    <li>Check-in "Enable custom formatters"
+                    <li>Close DevTools
+                    <li>Open DevTools
+                </ul>
+                <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for
+                    further details.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- scripts and styles -->
+{% style "/assets/bootstrap/css/bootstrap.min.css" %}
+{% style "/assets/font-awesome/css/all.css" %}
+{% style "/css/screen.css" %}
+
+{% script "/assets/jquery/jquery.min.js" %}
+{% script "/assets/font-awesome/js/all.js" %}
+{% script "/assets/tether/dist/js/tether.min.js" %}
+{% script "/assets/bootstrap/js/bootstrap.min.js" %}
+
+<script type="text/javascript">
+    var csrfToken = "{{csrf-token}}";
+</script>
+{% script "/js/app.js" %}
+
+{% script "/js/graphing.js" %}
+</body>
+</html>
