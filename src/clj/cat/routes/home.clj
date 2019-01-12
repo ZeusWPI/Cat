@@ -32,7 +32,7 @@
            (GET "/" []
              (let [users (get-users)
                    relations (get-relations)]
-               (home-page {:relations relations :users users})))
+               (home-page {:relations relations :users users :user {}})))
            ;(GET "/docs" []
            ;  (-> (response/ok (-> "docs/docs.md" io/resource slurp))
            ;      (response/header "Content-Type" "text/plain; charset=utf-8")))
