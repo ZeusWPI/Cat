@@ -59,7 +59,7 @@
                                              (-> usr
                                                  (dissoc :gender :id)
                                                  (assoc :index (get id-index-map (:id usr)))
-                                                 (assoc :group (rand-int 2))))))]
+                                                 (assoc :group (rand-int 5))))))]
                (response/ok {:nodes nodes-indexed
                              :links rels-indexed})))
            (POST "/relations" req

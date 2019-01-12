@@ -3,44 +3,7 @@ body {
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     height: 100%;
 }
-nav {
-    margin-bottom: 20px;
-}
 
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-.grid-item{
-    margin-left: 20px;
-    margin-bottom: 20px;
-}
-
-.item-container{
-    /*https://medium.com/@js_tut/new-things-css-grid-brings-to-the-table-e465cb5d2841*/
-    display: grid;
-    /*grid-template-rows: 100px 100px;*/
-    grid-template-columns: 100px 100px;
-    grid-gap: 10px;
-    justify-items: unset;
-    padding: 0 0 20px 10px;
-}
-.item {
-    justify-content: start;
-    border: 1px solid #b1b1b1;
-    align-items: start;
-    padding: 10px;
-}
-
-select {
-    margin-bottom: 10px;
-}
-
-.input-container{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-.input-item {
-
+table {
+    margin-top: 2em;
 }
