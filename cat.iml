@@ -185,11 +185,8 @@
     <orderEntry type="library" name="Leiningen: org.projectodd.wunderboss/wunderboss-web:0.13.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.slf4j/slf4j-api:1.7.7" level="project" />
     <orderEntry type="library" name="Leiningen: org.tobereplaced/lettercase:1.0.0" level="project" />
-    <orderEntry type="library" name="Leiningen: org.webjars.bower/tether:1.4.4" level="project" />
-    <orderEntry type="library" name="Leiningen: org.webjars/bootstrap:4.2.1" level="project" />
+    <orderEntry type="library" name="Leiningen: org.webjars.npm/bulma:0.7.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.webjars/font-awesome:5.6.1" level="project" />
-    <orderEntry type="library" name="Leiningen: org.webjars/jquery:3.0.0" level="project" />
-    <orderEntry type="library" name="Leiningen: org.webjars/popper.js:1.14.3" level="project" />
     <orderEntry type="library" name="Leiningen: org.webjars/webjars-locator-core:0.35" level="project" />
     <orderEntry type="library" name="Leiningen: org.webjars/webjars-locator:0.34" level="project" />
     <orderEntry type="library" name="Leiningen: pjstadig/humane-test-output:0.9.0" level="project" />

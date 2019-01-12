@@ -26,8 +26,8 @@
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
                  [org.postgresql/postgresql "42.2.5"]
-                 [org.webjars.bower/tether "1.4.4"]
-                 [org.webjars/bootstrap "4.2.1"]
+                 ;https://www.webjars.org/
+                 [org.webjars.npm/bulma "0.7.2"]
                  [org.webjars/font-awesome "5.6.1"]
                  [org.webjars/webjars-locator "0.34"]
                  [ring-webjars "0.2.0"]

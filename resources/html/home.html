@@ -4,14 +4,75 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Welcome to cat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
     <script src="https://cdn.jsdelivr.net/npm/vega@4.4.0"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 <body>
-<div id="navbar"></div>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item">
+            <img src="/img/cat_hollow_purple.png" width="28" height="28">
+        </a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+           data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+        <!--
+        <div class="navbar-start">
+            <a class="navbar-item">
+                Home
+            </a>
+
+            <a class="navbar-item">
+                Documentation
+            </a>
+
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    More
+                </a>
+
+                <div class="navbar-dropdown">
+                    <a class="navbar-item">
+                        About
+                    </a>
+                    <a class="navbar-item">
+                        Jobs
+                    </a>
+                    <a class="navbar-item">
+                        Contact
+                    </a>
+                    <hr class="navbar-divider">
+                    <a class="navbar-item">
+                        Report an issue
+                    </a>
+                </div>
+            </div>
+        </div>
+-->
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-primary">
+                        <strong>Sign up</strong>
+                    </a>
+                    <a class="button is-light">
+                        Log in
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
 <section class="section">
-    <div id="view"></div>
+    <div id="view">
+        <div style="width: 400px; height: 300px"></div>
+    </div>
 </section>
 <section class="section">
     <div class="columns">
@@ -116,46 +177,51 @@
 </section>
 <section class="section">
     <div id="app">
-        <div class="container-fluid">
-            <div class="card-deck">
-                <div class="card-block">
-                    <h4>Welcome to cat</h4>
-                    <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
-                    <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.
-                    </p>
-                    <h4>For better ClojureScript development experience in Chrome follow these steps:</h4>
-                    <ul>
-                        <li>Open DevTools
-                        <li>Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1
-                            >
-                            General > Console)
-                        <li>Check-in "Enable custom formatters"
-                        <li>Close DevTools
-                        <li>Open DevTools
-                    </ul>
-                    <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for
-                        further details.</p>
-                </div>
-            </div>
+        <div class="container">
+            <h4>Welcome to cat</h4>
+            <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
+            <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.
+            </p>
+            <h4>For better ClojureScript development experience in Chrome follow these steps:</h4>
+            <ul>
+                <li>Open DevTools
+                <li>Go to Settings ("three dots" icon in the upper right corner of DevTools > Menu > Settings F1
+                    >
+                    General > Console)
+                <li>Check-in "Enable custom formatters"
+                <li>Close DevTools
+                <li>Open DevTools
+            </ul>
+            <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for
+                further details.</p>
         </div>
     </div>
 </section>
+<footer class="footer">
+    <div class="content has-text-centered">
+        <div>Icons made by
+            <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a
+                    href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a
+                    href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC
+                3.0
+                BY</a>
+        </div>
+    </div>
+</footer>
 
 <!-- scripts and styles -->
-{% style "/assets/bootstrap/css/bootstrap.min.css" %}
+{% style "/assets/bulma/css/bulma.css" %}
 {% style "/assets/font-awesome/css/all.css" %}
 {% style "/css/screen.css" %}
 
-{% script "/assets/jquery/jquery.min.js" %}
+{% script "/js/home.js" %}
 {% script "/assets/font-awesome/js/all.js" %}
-{% script "/assets/tether/dist/js/tether.min.js" %}
-{% script "/assets/bootstrap/js/bootstrap.min.js" %}
 
 <script type="text/javascript">
     var csrfToken = "{{csrf-token}}";
 </script>
-<!--{% script "/js/app.js" %}-->
+{% script "/js/app.js" %} <!-- Compiled clojurescript -->
 
-{% script "/js/graphing.js" %}
+{% script "/js/graphing.js" %} <!-- Vega graphing -->
 </body>
 </html>
