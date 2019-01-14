@@ -1,14 +1,19 @@
--- :name create-user! :! :n
+-- :name create-user! :insert
 -- :doc creates a new user record
 INSERT INTO users
-(name, gender)
-VALUES (:name, :gender)
+(name, gender, zeusid)
+VALUES (:name, :gender, :zeusid)
 
 -- :name update-user! :! :n
 -- :doc updates an existing user record
 --UPDATE users
 --SET first_name = :first_name, last_name = :last_name, email = :email
 --WHERE id = :id
+
+-- :name get-zeus-user :? :1
+-- :doc retrieve a user on their zeuswpi id
+SELECT * FROM users
+WHERE zeusid = :zeusid
 
 -- :name get-users :? :*
 -- :doc retrieves a user record given the id

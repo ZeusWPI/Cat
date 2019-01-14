@@ -4,9 +4,10 @@
             [clojure.java.io :as io]
             [cat.oauth :as oauth]
             [clojure.tools.logging :as log]
-            [cat.moauth :as mo]))
+            [cat.moauth :as mo]
+            [cat.db.core :refer [*db*] :as db]))
 
-(def admins #{117                                           ;flynn
+(def admins #{31                                           ;flynn
               })
 
 (defn set-user! [user session redirect-url]
@@ -34,7 +35,9 @@
       found))
 
 (defn oauth-callback
-  "Handles the callback from adams."
+  "Handles the callback from adams with the access_token
+   Fetches the user from the database, creating a new one if not found
+   Sets the user in the session and redirects back to origin \"/\" "
   [req_token {:keys [params session]}]
   ; oauth request was denied by user
   (if (:denied params)
@@ -46,7 +49,15 @@
       (log/info "Fetching user info")
       (let [user (mo/get-user-info access_token)]
         (log/info "User info: " user)
-        (set-user! user session "/")))))
+        (let [zeususer (db/get-zeus-user {:zeusid (:id user)})]
+          (println "Zeus user from db: " zeususer)
+          (if zeususer
+            (set-user! zeususer session "/")
+            (-> {:name   (:username user)
+                 :gender nil
+                 :zeusid (:id user)}
+                (db/create-user!,,,)
+                (set-user!,,, session "/"))))))))
 
 ;(catch [:status 401] _
 ;             (error-page {:status 401

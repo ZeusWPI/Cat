@@ -92,10 +92,72 @@
 <section class="section">
     <div class="container">
         <div id="view">
-            <div style="width: 400px; height: 300px"></div>
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
         </div>
     </div>
 </section>
+{% if user %}
+<section class="section">
+    <div class="columns">
+        <div class="column">
+            <h3 class="title is-3">Your cuddles</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Person 1</th>
+                    <th>Person 2</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for relation in user-relations %}
+                <tr>
+                    <td>{{relation.name}}</td>
+                    <td>{{relation.name_2}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <h3 class="title is-3">Request cuddles!</h3>
+            <form action="/request_relation" method="post">
+                {% csrf-field %}
+                <div class="field">
+                    <label for="to_id">Person to</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="to_id" id="to_id">
+                                {% for user in other_users %}
+                                <option value="{{user.id}}">{{user.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="button is-link" type="submit" value="Submit">
+                    </div>
+                </div>
+            </form>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Outgoing requests</th>
+                </tr>
+                </thead>
+                {% for rel_req in user-relation-requests %}
+                <tr>
+                    <td>{{rel_req.name}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</section>
+{% endif %}
 {% if user.admin.enabled %}
 <section class="section">
     <div class="columns">

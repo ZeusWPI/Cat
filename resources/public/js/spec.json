@@ -39,7 +39,7 @@
     },
     {
       "name": "nodeRadius",
-      "value": 8,
+      "value": 10,
       "bind": {
         "input": "range",
         "min": 1,

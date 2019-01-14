@@ -3,12 +3,8 @@
             [cat.db.core :refer [*db*] :as db]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
-            [clojure.java.io :as io]
             [struct.core :as st]
-            [clojure.edn :as edn]
-            [clojure.tools.logging :as log]
-            [clojure.data.json :as json]
-            [oauth.client :as oauth]))
+            [clojure.tools.logging :as log]))
 
 (def user-schema
   [[:name st/required st/string]
@@ -17,6 +13,9 @@
 (def relation-schema
   [[:from_id st/required st/integer-str]
    [:to_id st/required st/integer-str]])
+
+(def request_relation-schema
+  [[:to_id st/required st/integer-str]])
 
 (defn home-page [params]
   (layout/render "home.html" params))
@@ -32,9 +31,25 @@
 (defroutes home-routes
            (GET "/" req
              (let [users (get-users)
-                   relations (get-relations)]
+                   relations (get-relations)
+                   user (-> (get-in req [:session :user]))
+                   user-relations (when user
+                                    (seq (filter (fn [rel]
+                                                   (or
+                                                     (= (:name rel) (:username user))
+                                                     (= (:name_2 rel) (:username user))))
+                                                 relations)))
+                   other_users (when user
+                                 (seq (filter (fn [usr] (not (= (:id usr) (:id user))))
+                                              users)))]
                (log/info (str "Session: " (:session req)))
-               (home-page {:relations relations :users users :user (get-in req [:session :user])})))
+               ;(log/info (str "User relations: " user-relations))
+               ;(log/info (str "Other Users: " other_users))
+               (home-page {:relations relations
+                           :users users
+                           :user user
+                           :user-relations user-relations
+                           :other_users other_users})))
            ;(GET "/docs" []
            ;  (-> (response/ok (-> "docs/docs.md" io/resource slurp))
            ;      (response/header "Content-Type" "text/plain; charset=utf-8")))
@@ -64,6 +79,19 @@
                                                  (assoc :group (rand-int 5))))))]
                (response/ok {:nodes nodes-indexed
                              :links rels-indexed})))
+           (POST "/request_relation" req
+             (let [data (:params req) [err result] (st/validate data request_relation-schema)]
+               (log/info "Post to " (:uri req) "\n with data " result)
+               (if (nil? err)
+                 (do
+                   ()
+                   (response/no-content)
+                   ;TODO add a request to the db
+                   )
+                 (do
+                   (response/bad-request "Incorrect input")))))
+
+           ; TODO make bottom 2 protected
            (POST "/relations" req
              (let [data (:params req) [err result] (st/validate data relation-schema)]
                (log/info "Post to " (:uri req))
