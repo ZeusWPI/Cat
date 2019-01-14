@@ -2,7 +2,7 @@
   (:require [cat.middleware :as middleware]
             [cat.layout :refer [error-page]]
             [cat.routes.home :refer [home-routes]]
-            [cat.routes.oauth :refer [oauth-routes]]
+            [cat.routes.oauth :refer [oauth-routes admin-routes]]
             [compojure.core :refer [routes wrap-routes]]
             [ring.util.http-response :as response]
             [compojure.route :as route]
@@ -21,6 +21,8 @@
                         (wrap-routes middleware/wrap-csrf)
                         (wrap-routes middleware/wrap-formats))
                     #'oauth-routes
+                    (-> #'admin-routes
+                        (wrap-routes middleware/wrap-restricted))
                     (route/not-found
                       (:body
                         (error-page {:status 404

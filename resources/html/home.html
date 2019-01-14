@@ -63,15 +63,24 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
+                    {% if user.admin %}
+                    {% if user.admin.enabled %}
+                    <a class="button is-light" href="/admin/disable">
+                        <strong>Disable admin</strong>
+                    </a>
+                    {% else %}
+                    <a class="button is-light" href="/admin/enable">
+                        <strong>Enable admin</strong>
+                    </a>
+                    {%endif%}
+                    {% endif %}
+
                     {% if user %}
                     <a class="button is-light" href="/logout">
                         <strong>Logout</strong>
                     </a>
                     {% else %}
-                    <a class="button is-info">
-                        <strong>Sign up</strong>
-                    </a>
-                    <a class="button is-light" href="/oauth/oauth-init">
+                    <a class="button is-info" href="/oauth/oauth-init">
                         Log in
                     </a>
                     {% endif %}
@@ -81,10 +90,13 @@
     </div>
 </nav>
 <section class="section">
-    <div id="view">
-        <div style="width: 400px; height: 300px"></div>
+    <div class="container">
+        <div id="view">
+            <div style="width: 400px; height: 300px"></div>
+        </div>
     </div>
 </section>
+{% if user.admin.enabled %}
 <section class="section">
     <div class="columns">
         <div class="column">
@@ -186,6 +198,7 @@
         </div>
     </div>
 </section>
+{% endif %}
 <section class="section">
     <div id="app">
         <div class="container">

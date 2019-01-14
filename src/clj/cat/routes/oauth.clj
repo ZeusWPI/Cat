@@ -6,9 +6,18 @@
             [clojure.tools.logging :as log]
             [cat.moauth :as mo]))
 
+(def admins #{117                                           ;flynn
+              })
+
 (defn set-user! [user session redirect-url]
-  (-> (found redirect-url)
-      (assoc :session (assoc session :user user))))
+  (let [new-session (-> session
+                        (assoc :user user)
+                        (cond-> (contains? admins (:id user))
+                                (->
+                                  (assoc-in [:user :admin] {:enabled false})
+                                  (assoc :identity "foo"))))]
+    (-> (found redirect-url)
+        (assoc :session new-session))))
 
 (defn remove-user! [session redirect-url]
   (-> (found redirect-url)
@@ -16,7 +25,7 @@
 
 (defn clear-session! [redirect-url]
   (-> (found redirect-url)
-      (dissoc :session)))
+      (assoc :session nil)))
 
 (defn oauth-init
   "Initiates the Twitter OAuth"
@@ -48,4 +57,10 @@
 (defroutes oauth-routes
            (GET "/oauth/oauth-init" req (oauth-init req))
            (GET "/oauth/oauth-callback" [& req_token :as req] (oauth-callback req_token req))
-           (GET "/logout" req (remove-user! (:session req) "/")))
+           (GET "/logout" req (clear-session! "/")))
+
+(defroutes admin-routes
+           (GET "/admin/enable" req (-> (found "/")
+                                        (assoc :session (assoc-in (:session req) [:user :admin :enabled] true))))
+           (GET "/admin/disable" req (-> (found "/")
+                                         (assoc :session (assoc-in (:session req) [:user :admin :enabled] false)))))
