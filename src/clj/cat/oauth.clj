@@ -16,14 +16,17 @@
 (defn oauth-callback-uri
   "Generates the oauth request callback URI"
   [{:keys [headers]}]
-  (str (headers "x-forwarded-proto") "://" (headers "host") "/oauth/oauth-callback"))
+  (let [callback-url (str "http://" (headers "host") "/oauth/oauth-callback")]
+    (println "Generated callback url:" callback-url)
+    callback-url))
 
 (defn fetch-request-token
   "Fetches a request token."
   [request]
   (let [callback-uri (oauth-callback-uri request)]
     (log/info "Fetching request token using callback-uri" callback-uri)
-    (oauth/request-token consumer (oauth-callback-uri request))))
+    (log/info "Oauth consumer: " consumer)
+    (oauth/request-token consumer callback-uri {:grant_type "authorization_code"})))
 
 (defn fetch-access-token
   [request_token]
@@ -31,5 +34,9 @@
 
 (defn auth-redirect-uri
   "Gets the URI the user should be redirected to when authenticating."
-  [request-token]
-  (str (oauth/user-approval-uri consumer request-token)))
+  ([request]
+   (auth-redirect-uri request ""))
+  ([request request-token]
+   (str (oauth/user-approval-uri consumer request-token {:response_type "code"
+                                                         :client_id     (env :oauth-consumer-key)
+                                                         :redirect_uri (oauth-callback-uri request)}))))

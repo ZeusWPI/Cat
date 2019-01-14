@@ -7,7 +7,8 @@
             [struct.core :as st]
             [clojure.edn :as edn]
             [clojure.tools.logging :as log]
-            [clojure.data.json :as json]))
+            [clojure.data.json :as json]
+            [oauth.client :as oauth]))
 
 (def user-schema
   [[:name st/required st/string]
@@ -29,10 +30,11 @@
   (db/get-users))
 
 (defroutes home-routes
-           (GET "/" []
+           (GET "/" req
              (let [users (get-users)
                    relations (get-relations)]
-               (home-page {:relations relations :users users :user {}})))
+               (log/info (str "Session: " (:session req)))
+               (home-page {:relations relations :users users :user (get-in req [:session :user])})))
            ;(GET "/docs" []
            ;  (-> (response/ok (-> "docs/docs.md" io/resource slurp))
            ;      (response/header "Content-Type" "text/plain; charset=utf-8")))

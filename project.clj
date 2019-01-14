@@ -4,6 +4,7 @@
   ;:url "http://example.com/FIXME"
 
   :dependencies [[buddy "2.0.0"]
+                 [com.cemerick/friend "0.2.3"]
                  [cheshire "5.8.1"]
                  [clj-oauth "1.5.5"]
                  [clojure.java-time "0.3.2"]
@@ -19,6 +20,7 @@
                  [markdown-clj "1.0.5"]
                  [metosin/muuntaja "0.6.3"]
                  [metosin/ring-http-response "0.9.1"]
+                 [slingshot "0.12.1"]
                  [mount "0.1.15"]
                  [nrepl "0.5.3"]
                  [org.clojure/clojure "1.10.0"]
