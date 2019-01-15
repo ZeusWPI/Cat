@@ -24,6 +24,17 @@ To start the ui live rendering, run:
 
     lein figwheel
 
+## Development
+### Database
+* ENUM TYPE
+
+    Because of the lack of typing in clojure and the forced typing of the jdbc driver
+we need to manually manage conversion of enum types to clojure keywords.
+
+    When adding an enum to the database, make sure to add it to the '+schema-enums+' set [src/clj/cat/db/core.clj]
+
+
+
 ## License
 
 Copyright © 2019 FIXME

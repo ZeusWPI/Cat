@@ -4,7 +4,9 @@
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
             [struct.core :as st]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [cat.layout :refer [error-page]]
+            [clojure.string :as s]))
 
 (def user-schema
   [[:name st/required st/string]
@@ -28,6 +30,15 @@
 (defn get-users []
   (db/get-users))
 
+(defn response-wrong-parameters []
+  (error-page {:status  400
+               :title   "Wrong request parameters"
+               :message "Please contact your system administrator to fix this issue"}))
+
+(defn map-status-to-value
+  [relation-requests]
+  (map (fn [rr] (cond-> rr (:status rr) (assoc :status (name (:status rr))))) relation-requests))
+
 (defroutes home-routes
            (GET "/" req
              (let [users (get-users)
@@ -36,20 +47,25 @@
                    user-relations (when user
                                     (seq (filter (fn [rel]
                                                    (or
-                                                     (= (:name rel) (:username user))
-                                                     (= (:name_2 rel) (:username user))))
+                                                     (= (:name rel) (:name user))
+                                                     (= (:name_2 rel) (:name user))))
                                                  relations)))
                    other_users (when user
                                  (seq (filter (fn [usr] (not (= (:id usr) (:id user))))
-                                              users)))]
+                                              users)))
+                   rel-requests-out (seq (map-status-to-value (db/get-relation-requests-from-user {:from_id (:id user)})))
+                   rel-requests-in (seq (map-status-to-value (db/get-relation-requests-to-user {:to_id (:id user)})))]
                (log/info (str "Session: " (:session req)))
+               (log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
                ;(log/info (str "User relations: " user-relations))
                ;(log/info (str "Other Users: " other_users))
-               (home-page {:relations relations
-                           :users users
-                           :user user
-                           :user-relations user-relations
-                           :other_users other_users})))
+               (home-page {:relations        relations
+                           :users            users
+                           :user             user
+                           :user-relations   user-relations
+                           :other_users      other_users
+                           :rel-requests-out rel-requests-out
+                           :rel-requests-in  rel-requests-in})))
            ;(GET "/docs" []
            ;  (-> (response/ok (-> "docs/docs.md" io/resource slurp))
            ;      (response/header "Content-Type" "text/plain; charset=utf-8")))
@@ -79,26 +95,41 @@
                                                  (assoc :group (rand-int 5))))))]
                (response/ok {:nodes nodes-indexed
                              :links rels-indexed})))
+
+           ; TODO make next 2 user protected
+           (POST "/relation_request/:id/status" [id & body]
+             (let [rr_id_map {:id id}
+                   success (cond
+                             (contains? body :accept) (do
+                                                        (let [rr (db/get-relation-request rr_id_map)]
+                                                          (db/create-relation! {:from_id (:from_id rr) :to_id (:to_id rr)}))
+                                                        (db/update-relation-request-status! (assoc rr_id_map :status :status/accepted)))
+                             (contains? body :decline) (db/update-relation-request-status! (assoc rr_id_map :status :status/declined))
+                             :else false)]
+               (if success
+                 (response/found "/")
+                 (response-wrong-parameters))))
+           ; STATUS ENUM: (open, accepted, rejected)
            (POST "/request_relation" req
              (let [data (:params req) [err result] (st/validate data request_relation-schema)]
                (log/info "Post to " (:uri req) "\n with data " result)
                (if (nil? err)
                  (do
-                   ()
-                   (response/no-content)
-                   ;TODO add a request to the db
-                   )
+                   (db/create-relation-request! {:from_id (get-in req [:session :user :id])
+                                                 :to_id   (:to_id result)
+                                                 :status  :status/open})
+                   (response/found "/"))
                  (do
                    (response/bad-request "Incorrect input")))))
 
-           ; TODO make bottom 2 protected
+           ; TODO make bottom 2 admin protected
            (POST "/relations" req
              (let [data (:params req) [err result] (st/validate data relation-schema)]
                (log/info "Post to " (:uri req))
                (if (nil? err)
                  (do
                    (db/create-relation! result)
-                   (response/no-content))
+                   (response/found "/"))
                  (do
                    (response/bad-request "Incorrect input")))))
            (POST "/users" req
@@ -107,8 +138,8 @@
                (println data)
                (if (st/valid? data user-schema)
                  (do
-                   (db/create-user! data)
-                   (response/no-content))
+                   (db/create-user! (assoc data :zeusid nil))
+                   (response/found "/"))
                  (do
                    (response/bad-request "Incorrect input"))))))
 

@@ -6,7 +6,8 @@
     [conman.core :as conman]
     [java-time :as jt]
     [cat.config :refer [env]]
-    [mount.core :refer [defstate]])
+    [mount.core :refer [defstate]]
+    [clojure.string :as s])
   (:import org.postgresql.util.PGobject
            java.sql.Array
            clojure.lang.IPersistentMap
@@ -83,3 +84,40 @@
   IPersistentVector
   (sql-value [value] (to-pg-json value)))
 
+
+; postgres enum type <--> clojure namespaces keywords
+
+; https://raw.githubusercontent.com/qutebrowser/qutebrowser/master/doc/img/cheatsheet-big.png
+; Handle Inserting of keywords as enums into the db
+; Usage: (insert! pg-db :files {:name "my-file.txt", :status :processing-status/pending})
+(defn kw->pgenum
+  "Convert clj keyword to equivalent PGobject"
+  [kw]
+  (let [type (-> (namespace kw)
+                 (s/replace "-" "_"))
+        value (name kw)]
+    (doto (PGobject.)
+      (.setType type)
+      (.setValue value))))
+
+(extend-type clojure.lang.Keyword
+  jdbc/ISQLValue
+  (sql-value [kw]
+    (kw->pgenum kw)))
+
+; Handle extracting keywords from the db enum type
+; Usage:
+;   (query (:db user/system) ["SELECT * FROM files"])
+;     => ({:status :processing-status/pending, :name "my-file.txt"})
+(def +schema-enums+
+  "A set of all PostgreSQL enums in schema.sql. Used to convert
+  enum-values back into Clojure keywords."
+  #{"status"})
+
+(extend-type String
+  jdbc/IResultSetReadColumn
+  (result-set-read-column [val rsmeta idx]
+    (let [type (.getColumnTypeName rsmeta idx)]
+      (if (contains? +schema-enums+ type)
+        (keyword (s/replace type "_" "-") val)
+        val))))

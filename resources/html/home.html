@@ -101,8 +101,8 @@
 {% if user %}
 <section class="section">
     <div class="columns">
-        <div class="column">
-            <h3 class="title is-3">Your cuddles</h3>
+        <div class="column is-narrow">
+            <h3 class="subtitle is-3">Your cuddles</h3>
             <table class="table">
                 <thead>
                 <tr>
@@ -121,11 +121,9 @@
             </table>
         </div>
         <div class="column">
-            <h3 class="title is-3">Request cuddles!</h3>
             <form action="/request_relation" method="post">
                 {% csrf-field %}
-                <div class="field">
-                    <label for="to_id">Person to</label>
+                <div class="field has-addons">
                     <div class="control">
                         <div class="select">
                             <select name="to_id" id="to_id">
@@ -135,25 +133,71 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                <div class="field">
                     <div class="control">
-                        <input class="button is-link" type="submit" value="Submit">
+                        <input class="button is-link" type="submit" value="Request cuddle!">
                     </div>
                 </div>
             </form>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Outgoing requests</th>
-                </tr>
-                </thead>
-                {% for rel_req in user-relation-requests %}
-                <tr>
-                    <td>{{rel_req.name}}</td>
-                </tr>
-                {% endfor %}
-            </table>
+            <div class="columns">
+                <div class="column">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Outgoing requests</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        {% for rr in rel-requests-out %}
+                        <tr>
+                            <td>{{rr.to_name}}
+                            </td>
+                            <td>
+                                {% include "parts/colored-status.html" %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="column">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Incoming requests</th>
+                            <th colspan="2">Status</th>
+                        </tr>
+                        </thead>
+                        {% for rr in rel-requests-in %}
+                        <tr>
+                            <td>
+                                <span>{{rr.from_name}}</span>
+                            </td>
+                            <td {% ifunequal rr.status "open" %}colspan='2'{% endifunequal %}>
+                            {% include "parts/colored-status.html" %}
+                            </td>
+                            {% ifequal rr.status "open" %}
+                            <td>
+                                <form action="/relation_request/{{rr.rr_id}}/status" method="post">
+                                    {% csrf-field %}
+                                    <div class="field has-addons is-right">
+                                        <div class="control">
+                                            <button type="submit" name="accept"
+                                                    class="button is-success is-small is-rounded is-outlined">Accept
+                                            </button>
+                                        </div>
+                                        <div class="control">
+                                            <button type="submit" name="decline"
+                                                    class="button is-danger is-small is-rounded is-outlined">Decline
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                            {% endifequal %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -182,7 +226,7 @@
                     </div>
                     <div class="field">
                         <div class="control">
-                            <input class="button is-link" type="submit" value="Submit">
+                            <input class="button is-link" type="submit" value="Add!">
                         </div>
                     </div>
                 </form>
@@ -222,8 +266,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="field">
-                        <label for="to">Person to</label>
+                    <div class="field has-addons">
                         <div class="control">
                             <div class="select">
                                 <select name="to_id" id="to">
@@ -233,10 +276,8 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="field">
                         <div class="control">
-                            <input class="button is-link" type="submit" value="Submit">
+                            <input class="button is-link" type="submit" value="Add!">
                         </div>
                     </div>
                 </form>

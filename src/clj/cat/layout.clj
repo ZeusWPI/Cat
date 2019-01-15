@@ -4,12 +4,17 @@
             [markdown.core :refer [md-to-html-string]]
             [ring.util.http-response :refer [content-type ok]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+            [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+            [clojure.string :as s]))
 
 
-(parser/set-resource-path!  (clojure.java.io/resource "html"))
+(parser/set-resource-path! (clojure.java.io/resource "html"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
+
+(filters/add-filter! :print (fn [x]
+                             (println "Selmer var: " x)
+                             x))
 
 (defn render
   "renders the HTML template located relative to resources/html"

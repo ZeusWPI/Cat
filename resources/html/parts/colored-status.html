@@ -1,0 +1,12 @@
+<span class='
+    {% ifequal rr.status "open" %}
+        has-text-info
+    {% else %}
+        {% ifequal rr.status "accepted" %}
+            has-text-success
+        {% else %}
+            has-text-danger
+        {% endifequal %}
+    {% endifequal %}'>
+    {{rr.status}}
+</span>
