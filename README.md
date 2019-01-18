@@ -76,7 +76,7 @@ You can find these function available in the [userspace definitions][2]
     Because of the lack of typing in clojure and the forced typing of the jdbc driver
 we need to manually manage conversion of enum types to clojure keywords.
 
-    When adding an enum to the database, make sure to add it to the '+schema-enums+' set [src/clj/cat/db/core.clj]
+    When adding an enum to the database, make sure to add it to the '+schema-enums+' set see [db][3]
 
 
 
@@ -89,3 +89,4 @@ we need to manually manage conversion of enum types to clojure keywords.
 
 
 [2]: env/dev/clj/user.clj
+[3]: src/clj/cat/db/core.clj
