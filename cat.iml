@@ -71,7 +71,7 @@
     <orderEntry type="library" name="Leiningen: com.google.javascript/closure-compiler-externs:v20180805" level="project" />
     <orderEntry type="library" name="Leiningen: com.google.javascript/closure-compiler-unshaded:v20180805" level="project" />
     <orderEntry type="library" name="Leiningen: com.google.jsinterop/jsinterop-annotations:1.0.0" level="project" />
-    <orderEntry type="library" name="Leiningen: com.google.protobuf/protobuf-java:3.0.2" level="project" />
+    <orderEntry type="library" name="Leiningen: com.google.protobuf/protobuf-java:3.6.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.googlecode.json-simple/json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.lambdaworks/scrypt:1.4.0" level="project" />
     <orderEntry type="library" name="Leiningen: com.layerware/hugsql-adapter-clojure-java-jdbc:0.4.9" level="project" />
@@ -127,6 +127,7 @@
     <orderEntry type="library" name="Leiningen: metosin/vega-tools:0.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: migratus:1.2.0" level="project" />
     <orderEntry type="library" name="Leiningen: mount:0.1.15" level="project" />
+    <orderEntry type="library" name="Leiningen: mysql/mysql-connector-java:8.0.12" level="project" />
     <orderEntry type="library" name="Leiningen: net.cgrand/parsley:0.9.3" level="project" />
     <orderEntry type="library" name="Leiningen: net.cgrand/regex:1.1.0" level="project" />
     <orderEntry type="library" name="Leiningen: net.cgrand/sjacket:0.1.1" level="project" />
@@ -185,7 +186,6 @@
     <orderEntry type="library" name="Leiningen: org.openid4java/openid4java-nodeps:0.9.6" level="project" />
     <orderEntry type="library" name="Leiningen: org.ow2.asm/asm-all:4.2" level="project" />
     <orderEntry type="library" name="Leiningen: org.ow2.asm/asm:5.1" level="project" />
-    <orderEntry type="library" name="Leiningen: org.postgresql/postgresql:42.2.5" level="project" />
     <orderEntry type="library" name="Leiningen: org.projectodd.wunderboss/wunderboss-clojure:0.13.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.projectodd.wunderboss/wunderboss-core:0.13.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.projectodd.wunderboss/wunderboss-web-undertow:0.13.1" level="project" />

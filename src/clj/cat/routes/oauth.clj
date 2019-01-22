@@ -7,7 +7,7 @@
             [cat.moauth :as mo]
             [cat.db.core :refer [*db*] :as db]))
 
-(def admins #{31                                           ;flynn
+(def admins #{1                                           ;flynn
               })
 
 (defn set-user! [user session redirect-url]

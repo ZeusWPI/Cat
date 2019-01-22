@@ -27,7 +27,9 @@
                  [org.clojure/clojurescript "1.10.439" :scope "provided"]
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
-                 [org.postgresql/postgresql "42.2.5"]
+                 ;[org.postgresql/postgresql "42.2.5"]
+                 [mysql/mysql-connector-java "8.0.12"]
+                 [com.google.protobuf/protobuf-java "3.6.1"]
                  ;https://www.webjars.org/
                  [org.webjars.npm/bulma "0.7.2"]
                  [org.webjars/font-awesome "5.6.1"]

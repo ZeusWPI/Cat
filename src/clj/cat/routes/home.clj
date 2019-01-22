@@ -35,10 +35,6 @@
                :title   "Wrong request parameters"
                :message "Please contact your system administrator to fix this issue"}))
 
-(defn map-status-to-value
-  [relation-requests]
-  (map (fn [rr] (cond-> rr (:status rr) (assoc :status (name (:status rr))))) relation-requests))
-
 (defroutes home-routes
            (GET "/" req
              (let [users (get-users)
@@ -53,10 +49,10 @@
                    other_users (when user
                                  (seq (filter (fn [usr] (not (= (:id usr) (:id user))))
                                               users)))
-                   rel-requests-out (seq (map-status-to-value (db/get-relation-requests-from-user {:from_id (:id user)})))
-                   rel-requests-in (seq (map-status-to-value (db/get-relation-requests-to-user {:to_id (:id user)})))]
-               (log/info (str "Session: " (:session req)))
-               (log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
+                   rel-requests-out (seq (db/get-relation-requests-from-user {:from_id (:id user)}))
+                   rel-requests-in (seq (db/get-relation-requests-to-user {:to_id (:id user)}))]
+               ;(log/info (str "Session: " (:session req)))
+               ;(log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
                ;(log/info (str "User relations: " user-relations))
                ;(log/info (str "Other Users: " other_users))
                (home-page {:relations        relations
@@ -103,8 +99,8 @@
                              (contains? body :accept) (do
                                                         (let [rr (db/get-relation-request rr_id_map)]
                                                           (db/create-relation! {:from_id (:from_id rr) :to_id (:to_id rr)}))
-                                                        (db/update-relation-request-status! (assoc rr_id_map :status :status/accepted)))
-                             (contains? body :decline) (db/update-relation-request-status! (assoc rr_id_map :status :status/declined))
+                                                        (db/update-relation-request-status! (assoc rr_id_map :status "accepted")))
+                             (contains? body :decline) (db/update-relation-request-status! (assoc rr_id_map :status "declined"))
                              :else false)]
                (if success
                  (response/found "/")
@@ -117,7 +113,7 @@
                  (do
                    (db/create-relation-request! {:from_id (get-in req [:session :user :id])
                                                  :to_id   (:to_id result)
-                                                 :status  :status/open})
+                                                 :status  "open"})
                    (response/found "/"))
                  (do
                    (response/bad-request "Incorrect input")))))

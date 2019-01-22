@@ -1,33 +1,30 @@
 (ns cat.db.core
   (:require
-    [cheshire.core :refer [generate-string parse-string]]
+    [clj-time.jdbc]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as log]
     [conman.core :as conman]
-    [java-time :as jt]
+    [java-time.pre-java8 :as jt]
     [cat.config :refer [env]]
     [mount.core :refer [defstate]]
     [clojure.string :as s])
-  (:import org.postgresql.util.PGobject
-           java.sql.Array
-           clojure.lang.IPersistentMap
-           clojure.lang.IPersistentVector
-           [java.sql
+  (:import [java.sql
             BatchUpdateException
             PreparedStatement]))
+
 (defstate ^:dynamic *db*
-  :start (if-let [jdbc-url (env :database-url)]
-           (conman/connect! {:jdbc-url jdbc-url})
-           (do
-             (log/warn "database connection URL was not found, please set :database-url in your config, e.g: dev-config.edn")
-             *db*))
-  :stop (conman/disconnect! *db*))
+          :start (if-let [jdbc-url (env :database-url)]
+                   (conman/connect! {:jdbc-url jdbc-url})
+                   (do
+                     (log/warn "database connection URL was not found, please set :database-url in your config, e.g: dev-config.edn")
+                     *db*))
+          :stop (conman/disconnect! *db*))
 
 (conman/bind-connection *db* "sql/queries.sql")
 
 
 (extend-protocol jdbc/IResultSetReadColumn
-    java.sql.Timestamp
+  java.sql.Timestamp
   (result-set-read-column [v _2 _3]
     (.toLocalDateTime v))
   java.sql.Date
@@ -35,36 +32,10 @@
     (.toLocalDate v))
   java.sql.Time
   (result-set-read-column [v _2 _3]
-    (.toLocalTime v))
-  Array
-  (result-set-read-column [v _ _] (vec (.getArray v)))
-  PGobject
-  (result-set-read-column [pgobj _metadata _index]
-    (let [type  (.getType pgobj)
-          value (.getValue pgobj)]
-      (case type
-        "json" (parse-string value true)
-        "jsonb" (parse-string value true)
-        "citext" (str value)
-        value))))
-
-(defn to-pg-json [value]
-  (doto (PGobject.)
-    (.setType "jsonb")
-    (.setValue (generate-string value))))
-
-(extend-type clojure.lang.IPersistentVector
-  jdbc/ISQLParameter
-  (set-parameter [v ^java.sql.PreparedStatement stmt ^long idx]
-    (let [conn      (.getConnection stmt)
-          meta      (.getParameterMetaData stmt)
-          type-name (.getParameterTypeName meta idx)]
-      (if-let [elem-type (when (= (first type-name) \_) (apply str (rest type-name)))]
-        (.setObject stmt idx (.createArrayOf conn elem-type (to-array v)))
-        (.setObject stmt idx (to-pg-json v))))))
+    (.toLocalTime v)))
 
 (extend-protocol jdbc/ISQLValue
-    java.util.Date
+  java.util.Date
   (sql-value [v]
     (java.sql.Timestamp. (.getTime v)))
   java.time.LocalTime
@@ -78,46 +49,4 @@
     (jt/sql-timestamp v))
   java.time.ZonedDateTime
   (sql-value [v]
-    (jt/sql-timestamp v))
-  IPersistentMap
-  (sql-value [value] (to-pg-json value))
-  IPersistentVector
-  (sql-value [value] (to-pg-json value)))
-
-
-; postgres enum type <--> clojure namespaces keywords
-
-; https://raw.githubusercontent.com/qutebrowser/qutebrowser/master/doc/img/cheatsheet-big.png
-; Handle Inserting of keywords as enums into the db
-; Usage: (insert! pg-db :files {:name "my-file.txt", :status :processing-status/pending})
-(defn kw->pgenum
-  "Convert clj keyword to equivalent PGobject"
-  [kw]
-  (let [type (-> (namespace kw)
-                 (s/replace "-" "_"))
-        value (name kw)]
-    (doto (PGobject.)
-      (.setType type)
-      (.setValue value))))
-
-(extend-type clojure.lang.Keyword
-  jdbc/ISQLValue
-  (sql-value [kw]
-    (kw->pgenum kw)))
-
-; Handle extracting keywords from the db enum type
-; Usage:
-;   (query (:db user/system) ["SELECT * FROM files"])
-;     => ({:status :processing-status/pending, :name "my-file.txt"})
-(def +schema-enums+
-  "A set of all PostgreSQL enums in schema.sql. Used to convert
-  enum-values back into Clojure keywords."
-  #{"status"})
-
-(extend-type String
-  jdbc/IResultSetReadColumn
-  (result-set-read-column [val rsmeta idx]
-    (let [type (.getColumnTypeName rsmeta idx)]
-      (if (contains? +schema-enums+ type)
-        (keyword (s/replace type "_" "-") val)
-        val))))
+    (jt/sql-timestamp v)))

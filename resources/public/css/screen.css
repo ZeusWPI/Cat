@@ -4,10 +4,6 @@ body {
     height: 100%;
 }
 
-table {
-    margin-top: 2em;
-}
-
 .loader-container {
     width: 700px;
     height: 425px;
