@@ -5,7 +5,7 @@
 pom.xml
 dev-config.edn
 test-config.edn
-*.jar
+#*.jar
 *.class
 /.lein-*
 profiles.clj
@@ -13,3 +13,4 @@ profiles.clj
 .nrepl-port
 /log
 .idea
+configure-releases.sh
