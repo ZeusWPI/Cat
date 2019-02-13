@@ -1,10 +1,11 @@
 (ns cat.routes.home
   (:require [cat.layout :as layout]
+            [cat.config :refer [env]]
             [cat.db.core :refer [*db*] :as db]
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
             [struct.core :as st]
-            [clojure.tools.logging :as log]
+            [clojure.tools.logginqg :as log]
             [cat.layout :refer [error-page]]
             [clojure.string :as s]))
 

@@ -1,8 +1,6 @@
 (ns cat.routes.oauth
   (:require [ring.util.http-response :refer [ok found]]
             [compojure.core :refer [defroutes GET]]
-            [clojure.java.io :as io]
-            [cat.oauth :as oauth]
             [clojure.tools.logging :as log]
             [cat.moauth :as mo]
             [cat.db.core :refer [*db*] :as db]))

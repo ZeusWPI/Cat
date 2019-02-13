@@ -8,11 +8,11 @@
 ; Inspired by https://leonid.shevtsov.me/post/oauth2-is-easy/
 
 (defn- oauth2-params []
-  {:client-id        (env :oauth_consumer_key)
-   :client-secret    (env :oauth_consumer_secret)
-   :authorize-uri    (env :authorize_uri)
+  {:client-id        (env :oauth-consumer-key)
+   :client-secret    (env :oauth-consumer-secret)
+   :authorize-uri    (env :authorize-uri)
    :redirect_uri     (str (env :app-host) "/oauth/oauth-callback")
-   :access-token-uri (env :access_token_uri)
+   :access-token-uri (env :access-token-uri)
    ;:scope            "activity profile"
    })
 

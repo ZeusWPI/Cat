@@ -3,15 +3,15 @@
             [oauth.client :as oauth]
             [mount.core :refer [defstate]]
             [clojure.tools.logging :as log]))
-
-(defstate consumer
-          :start (oauth/make-consumer
-                   (env :oauth-consumer-key)
-                   (env :oauth-consumer-secret)
-                   (env :request-token-uri)
-                   (env :access-token-uri)
-                   (env :authorize-uri)
-                   :hmac-sha1))
+;
+;(defstate consumer
+;          :start (oauth/make-consumer
+;                   (env :oauth-consumer-key)
+;                   (env :oauth-consumer-secret)
+;                   (env :request-token-uri)
+;                   (env :access-token-uri)
+;                   (env :authorize-uri)
+;                   :hmac-sha1))
 
 (defn oauth-callback-uri
   "Generates the oauth request callback URI"
