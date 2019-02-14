@@ -5,7 +5,7 @@
             [compojure.core :refer [defroutes GET POST]]
             [ring.util.http-response :as response]
             [struct.core :as st]
-            [clojure.tools.logginqg :as log]
+            [clojure.tools.logging :as log]
             [cat.layout :refer [error-page]]
             [clojure.string :as s]))
 
