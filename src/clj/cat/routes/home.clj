@@ -59,7 +59,7 @@
                                               users)))
                    rel-requests-out (seq (db/get-relation-requests-from-user {:from_id (:id user)}))
                    rel-requests-in (seq (db/get-relation-requests-to-user {:to_id (:id user)}))]
-               ;(log/info (str "Session: " (:session req)))
+               (log/info (str "Session: " (:session req)))
                ;(log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
                ;(log/info (str "User relations: " user-relations))
                ;(log/info (str "Other Users: " other_users))
@@ -115,11 +115,16 @@
                  (response-wrong-parameters))))
            ; STATUS ENUM: (open, accepted, rejected)
            (POST "/request_relation" req
-             (let [data (:params req) [err result] (st/validate data request_relation-schema)]
+             (let [data (:params req)
+                   [err result] (st/validate data request_relation-schema)
+                   from-id (get-in req [:session :user :id])]
+               (if (nil? from-id) (response/found (error-page
+                                     {:status 400
+                                      :title  "No user id found in session"})))
                (log/info "Post to " (:uri req) "\n with data " result)
                (if (nil? err)
                  (do
-                   (db/create-relation-request! {:from_id (get-in req [:session :user :id])
+                   (db/create-relation-request! {:from_id from-id
                                                  :to_id   (:to_id result)
                                                  :status  "open"})
                    (response/found "/"))

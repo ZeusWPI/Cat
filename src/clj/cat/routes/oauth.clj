@@ -9,6 +9,7 @@
               })
 
 (defn set-user! [user session redirect-url]
+  (log/info "Set user in session: " user)
   (let [new-session (-> session
                         (assoc :user user)
                         (cond-> (contains? admins (:id user))
