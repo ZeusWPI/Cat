@@ -39,8 +39,11 @@
 (defroutes home-routes
            (GET "/" req
              (log/info "------")
-             (log/info (env :oauth-consumer-key))
-             (log/info (env :oauth-consumer-secret))
+             (log/info "key: " (env :oauth-consumer-key))
+             (log/info "secret: " (env :oauth-consumer-secret))
+             (log/info "host: " (env :app-host))
+             (log/info "token: " (env :access-token-uri))
+             (log/info "auth uri: " (env :authorize-uri))
              (log/info "------")
              (let [users (get-users)
                    relations (get-relations)
