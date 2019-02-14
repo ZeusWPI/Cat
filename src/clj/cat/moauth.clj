@@ -60,6 +60,7 @@
                                                            :redirect_uri  (:redirect-uri oauth2-params)}
                                              ;:basic-auth  [(:client-id oauth2-params) (:client-secret oauth2-params)]
                                              :as          :json
+                                             :insecure? true
                                              })]
           (println "Access token response:" access-token)
           (:body access-token)))
@@ -71,7 +72,8 @@
   [access-token]
   (let [url (str (env :user-api-uri))]
     (-> (httpclient/get url {:oauth-token access-token
-                             :as          :json})
+                             :as          :json
+                             :insecure? true})
         :body)
     ))
 
@@ -86,7 +88,8 @@
                            {:form-params {:grant_type    "refresh_token"
                                           :refresh_token refresh-token}
                             :basic-auth  [(:client-id oauth2-params) (:client-secret oauth2-params)]
-                            :as          :json})]
+                            :as          :json
+                            :insecure? true})]
       [access-token refresh-token])
     (catch [:status 401] _ nil)))
 
