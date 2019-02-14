@@ -11,9 +11,8 @@
   {:client-id        (env :oauth-consumer-key)
    :client-secret    (env :oauth-consumer-secret)
    :authorize-uri    (env :authorize-uri)
-   :redirect_uri     (str (env :app-host) "/oauth/oauth-callback")
+   :redirect-uri     (str (env :app-host) "/oauth/oauth-callback")
    :access-token-uri (env :access-token-uri)
-   ;:scope            "activity profile"
    })
 
 ; To authorize, redirect the user to the sign in / grant page
@@ -42,6 +41,7 @@
   "let the user authorize access by redirecting to the signin / grant page
  of the used oauth api"
   []
+  (log/info "Oauth params: " (oauth2-params))
   (authorize-uri (oauth2-params)))
 
 (defn get-authentication-response

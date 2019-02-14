@@ -29,8 +29,10 @@
 (defn oauth-init
   "Initiates the Twitter OAuth"
   [request]
-  (-> (mo/authorize-api-uri)
-      found))
+  (let [reee (mo/authorize-api-uri)]
+    (log/info "authorize uri: " reee)
+    (-> reee
+      found)))
 
 (defn oauth-callback
   "Handles the callback from adams with the access_token
