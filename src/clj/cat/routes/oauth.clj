@@ -5,7 +5,7 @@
             [cat.moauth :as mo]
             [cat.db.core :refer [*db*] :as db]))
 
-(def admins #{1                                           ;flynn
+(def admins #{10                                             ;flynn
               })
 
 (defn set-user! [user session redirect-url]
@@ -33,7 +33,7 @@
   (let [reee (mo/authorize-api-uri)]
     (log/info "authorize uri: " reee)
     (-> reee
-      found)))
+        found)))
 
 (defn oauth-callback
   "Handles the callback from adams with the access_token
@@ -51,14 +51,16 @@
       (let [user (mo/get-user-info access_token)]
         (log/info "User info: " user)
         (let [zeususer (db/get-zeus-user {:zeusid (:id user)})]
-          (println "Zeus user from db: " zeususer)
+          (log/info "Zeus user from db: " zeususer)
           (if zeususer
             (set-user! zeususer session "/")
-            (-> {:name   (:username user)
-                 :gender nil
-                 :zeusid (:id user)}
-                (db/create-user!,,,)
-                (set-user!,,, session "/"))))))))
+            (let [user-template {:name   (:username user)
+                                 :gender nil
+                                 :zeusid (:id user)}
+                  generated-key (-> user-template
+                                    (db/create-user!,,,))]
+              (log/info "Created user: " generated-key)
+              (set-user! (assoc user-template :id (:generated_key generated-key)) session "/"))))))))
 
 ;(catch [:status 401] _
 ;             (error-page {:status 401

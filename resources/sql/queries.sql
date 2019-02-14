@@ -10,7 +10,7 @@ VALUES (:name, :gender, :zeusid)
 --SET first_name = :first_name, last_name = :last_name, email = :email
 --WHERE id = :id
 
--- :name get-zeus-user :? :1
+-- :name get-zeus-user :<! :1
 -- :doc retrieve a user on their zeuswpi id
 SELECT * FROM users
 WHERE zeusid = :zeusid
