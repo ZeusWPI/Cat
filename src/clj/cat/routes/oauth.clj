@@ -5,14 +5,15 @@
             [cat.moauth :as mo]
             [cat.db.core :refer [*db*] :as db]))
 
-(def admins #{10                                            ;flynn
-              })
+; This list contains application admins, they can add non-zeus people and can add relations
+; More functionality is planned
+(def admins [{:name "flynn" :zeusid 117}])
 
 (defn set-user! [user session redirect-url]
   (log/info "Set user in session: " user)
   (let [new-session (-> session
                         (assoc :user user)
-                        (cond-> (contains? admins (:id user))
+                        (cond-> (some (partial = (select-keys user [:zeusid :name])) admins)
                                 (->
                                   (assoc-in [:user :admin] {:enabled false})
                                   (assoc :identity "foo"))))]
