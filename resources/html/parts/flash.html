@@ -1,0 +1,16 @@
+{% if flash %}
+
+<div class="section">
+    <div class="container">
+
+{% if flash.error %}
+<div class="notification is-danger">
+    <button class="delete" onclick="removeThis(this);"></button>
+    {{ flash.error }}
+</div>
+
+{% endif %}
+    </div>
+    </div>
+
+{% endif %}

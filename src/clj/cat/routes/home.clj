@@ -38,13 +38,6 @@
 
 (defroutes home-routes
            (GET "/" req
-             (log/info "------")
-             (log/info "key: " (env :oauth-consumer-key))
-             (log/info "secret: " (env :oauth-consumer-secret))
-             (log/info "host: " (env :app-host))
-             (log/info "token: " (env :access-token-uri))
-             (log/info "auth uri: " (env :authorize-uri))
-             (log/info "------")
              (let [users (get-users)
                    relations (get-relations)
                    user (-> (get-in req [:session :user]))
@@ -58,18 +51,22 @@
                                  (seq (filter (fn [usr] (not (= (:id usr) (:id user))))
                                               users)))
                    rel-requests-out (seq (db/get-relation-requests-from-user {:from_id (:id user)}))
-                   rel-requests-in (seq (db/get-relation-requests-to-user {:to_id (:id user)}))]
+                   rel-requests-in (seq (db/get-relation-requests-to-user {:to_id (:id user)}))
+                   non_requested_users (seq (filter (fn [other-user] (not (some (partial = (:id other-user)) (map :to_id rel-requests-out)))) other_users))]
                (log/info (str "Session: " (:session req)))
                ;(log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
                ;(log/info (str "User relations: " user-relations))
                ;(log/info (str "Other Users: " other_users))
+               ;(log/info (str "rel reqs out: " rel-requests-out))
+               ;(log/info (str "rel reqs out id: " (seq (map :to_id rel-requests-out))))
                (home-page {:relations        relations
                            :users            users
                            :user             user
                            :user-relations   user-relations
-                           :other_users      other_users
                            :rel-requests-out rel-requests-out
-                           :rel-requests-in  rel-requests-in})))
+                           :rel-requests-in  rel-requests-in
+                           :non_requested_users non_requested_users
+                           :flash            (:flash req)})))
            ;(GET "/docs" []
            ;  (-> (response/ok (-> "docs/docs.md" io/resource slurp))
            ;      (response/header "Content-Type" "text/plain; charset=utf-8")))
@@ -119,17 +116,20 @@
                    [err result] (st/validate data request_relation-schema)
                    from-id (get-in req [:session :user :id])]
                (if (nil? from-id) (response/found (error-page
-                                     {:status 400
-                                      :title  "No user id found in session"})))
+                                                    {:status 400
+                                                     :title  "No user id found in session"})))
                (log/info "Post to " (:uri req) "\n with data " result)
                (if (nil? err)
                  (do
+                   (log/debug "Create relation request")
                    (db/create-relation-request! {:from_id from-id
                                                  :to_id   (:to_id result)
                                                  :status  "open"})
                    (response/found "/"))
                  (do
-                   (response/bad-request "Incorrect input")))))
+                   (log/debug "Relation request failed")
+                   (log/debug err)
+                   (response/unprocessable-entity "Incorrect input")))))
 
            ; TODO make bottom 2 admin protected
            (POST "/relations" req

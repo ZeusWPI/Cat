@@ -88,6 +88,7 @@
         </div>
     </div>
 </nav>
+{% include "parts/flash.html" %}
 <section class="section">
     <div class="container">
         <div id="view">
@@ -145,7 +146,8 @@
                                 <div class="control">
                                     <div class="select">
                                         <select name="to_id" id="to_id">
-                                            {% for user in other_users %}
+                                            <option hidden disabled selected value> -- select an option -- </option>
+                                            {% for user in non_requested_users %}
                                             <option value="{{user.id}}">{{user.name}}</option>
                                             {% endfor %}
                                         </select>

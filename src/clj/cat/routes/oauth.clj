@@ -5,7 +5,7 @@
             [cat.moauth :as mo]
             [cat.db.core :refer [*db*] :as db]))
 
-(def admins #{10                                             ;flynn
+(def admins #{10                                            ;flynn
               })
 
 (defn set-user! [user session redirect-url]
@@ -48,19 +48,27 @@
     (let [{:keys [access_token refresh_token]} (mo/get-authentication-response nil req_token)]
       (log/info "Successfully fetched access-id: " access_token)
       (log/info "Fetching user info")
-      (let [user (mo/get-user-info access_token)]
-        (log/info "User info: " user)
-        (let [zeususer (db/get-zeus-user {:zeusid (:id user)})]
-          (log/info "Zeus user from db: " zeususer)
-          (if zeususer
-            (set-user! zeususer session "/")
-            (let [user-template {:name   (:username user)
-                                 :gender nil
-                                 :zeusid (:id user)}
-                  generated-key (-> user-template
-                                    (db/create-user!,,,))]
-              (log/info "Created user: " generated-key)
-              (set-user! (assoc user-template :id (:generated_key generated-key)) session "/"))))))))
+      (let [fetched-user (mo/get-user-info access_token)]
+        (log/info "Fetched user info: " fetched-user)
+        (let [local-user (db/get-zeus-user {:zeusid (:id fetched-user)})]
+          (log/info "Zeus user from db: " local-user)
+          (if local-user
+            (set-user! local-user session "/")
+            (try
+              (let [user-template {:name   (:username fetched-user)
+                                   :gender nil
+                                   :zeusid (:id fetched-user)}
+                    generated-key (-> user-template
+                                      (db/create-user!,,,))]
+                (log/info "Created user: " generated-key)
+                (set-user! (assoc user-template :id (:generated_key generated-key)) session "/"))
+              (catch Exception e
+                (do
+                  (log/warn "fetched user" fetched-user "already exists, but was not found")
+                  (log/warn (:cause (Throwable->map e)))
+                  (-> (found "/")
+                      (assoc :flash {:error "An error occurred, please try again."})))
+                ))))))))
 
 ;(catch [:status 401] _
 ;             (error-page {:status 401

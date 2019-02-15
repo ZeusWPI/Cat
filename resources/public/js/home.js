@@ -23,3 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+function removeThis(ele) {
+    ele.parentNode.remove();
+}
