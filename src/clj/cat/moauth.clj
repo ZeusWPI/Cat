@@ -61,7 +61,7 @@
                                              :as          :json
                                              :insecure? true
                                              })]
-          (println "Access token response:" access-token)
+          (log/debug "Access token response:" access-token)
           (:body access-token)))
       (catch Exception e (log/error "Something terrible happened..." e)))
     nil))
