@@ -26,18 +26,20 @@
   (POST "/relations" req (create-new-relation! req))
   (POST "/users" req (create-user! req)))
 
+(defroutes app-routes
+  (-> home-routes
+      middleware/wrap-csrf
+      middleware/wrap-formats)
+  (-> oauth-routes)
+  (-> admin-routes
+      middleware/wrap-restricted)
+  (route/not-found
+   (:body
+    (error-page {:status 404
+                 :title  "page not found"}))))
+
 (mount/defstate app
   :start
-  (middleware/wrap-base
-   (routes
-    (-> #'home-routes
-        (wrap-routes middleware/wrap-csrf)
-        (wrap-routes middleware/wrap-formats))
-    #'oauth-routes
-    (-> #'admin-routes
-        (wrap-routes middleware/wrap-restricted))
-    (route/not-found
-     (:body
-      (error-page {:status 404
-                   :title  "page not found"}))))))
+  (-> app-routes
+      middleware/wrap-base))
 
