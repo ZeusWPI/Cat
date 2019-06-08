@@ -1,17 +1,19 @@
 (defproject cat "0.1.0-SNAPSHOT"
 
   :description "A cuddle graph for zeus people"
-  ;:url "http://example.com/FIXME"
+                                        ;:url "http://example.com/FIXME"
 
   :dependencies [[buddy "2.0.0"]
-                 [com.cemerick/friend "0.2.3"]
                  [cheshire "5.8.1"]
                  [clj-oauth "1.5.5"]
                  [clojure.java-time "0.3.2"]
+                 [com.cemerick/friend "0.2.3"]
                  [com.cognitect/transit-clj "0.8.313"]
+                 [com.google.protobuf/protobuf-java "3.6.1"]
                  [compojure "1.6.1"]
                  [conman "0.8.3"]
                  [cprop "0.1.13"]
+                 [funcool/promesa "1.9.0"]
                  [funcool/struct "1.3.0"]
                  [luminus-immutant "0.2.4"]
                  [luminus-migrations "0.6.3"]
@@ -20,17 +22,16 @@
                  [markdown-clj "1.0.5"]
                  [metosin/muuntaja "0.6.3"]
                  [metosin/ring-http-response "0.9.1"]
-                 [slingshot "0.12.1"]
+                 [metosin/vega-tools "0.2.0"]
                  [mount "0.1.15"]
+                 [mysql/mysql-connector-java "8.0.12"]
                  [nrepl "0.5.3"]
                  [org.clojure/clojure "1.10.0"]
                  [org.clojure/clojurescript "1.10.439" :scope "provided"]
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
-                 ;[org.postgresql/postgresql "42.2.5"]
-                 [mysql/mysql-connector-java "8.0.12"]
-                 [com.google.protobuf/protobuf-java "3.6.1"]
-                 ;https://www.webjars.org/
+                                        ;[org.postgresql/postgresql "42.2.5"]
+                                        ;https://www.webjars.org/
                  [org.webjars.npm/bulma "0.7.2"]
                  [org.webjars/font-awesome "5.6.1"]
                  [org.webjars/webjars-locator "0.34"]
@@ -38,13 +39,12 @@
                  [ring/ring-core "1.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.5"]
-                 [metosin/vega-tools "0.2.0"]
-                 [funcool/promesa "1.9.0"]]
+                 [slingshot "0.12.1"]]
 
 
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj" "src/cljs" "src/cljc"]
   :test-paths ["test/clj"]
   :resource-paths ["resources" "target/cljsbuild"]
@@ -63,7 +63,7 @@
    :css-dirs ["resources/public/css"]
    :nrepl-middleware
    [cider/wrap-cljs-repl cider.piggieback/wrap-cljs-repl]}
-  
+
 
   :profiles
   {:uberjar {:omit-source true
@@ -81,8 +81,6 @@
                  :infer-externs true
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}}}}}
-             
-             
              :aot :all
              :uberjar-name "cat.jar"
              :source-paths ["env/prod/clj"]
@@ -134,7 +132,7 @@
                       :main "cat.doo-runner"
                       :optimizations :whitespace
                       :pretty-print true}}}}}
-                  
+
 
    :profiles/dev {}
    :profiles/test {}}
