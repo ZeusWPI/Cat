@@ -18,7 +18,6 @@
             [buddy.auth.backends.session :refer [session-backend]])
   (:import))
 
-
 (defn wrap-internal-error [handler]
   (fn [req]
     (try
@@ -31,12 +30,11 @@
 
 (defn wrap-csrf [handler]
   (wrap-anti-forgery
-    handler
-    {:error-response
-     (error-page
-       {:status 403
-        :title  "Invalid anti-forgery token"})}))
-
+   handler
+   {:error-response
+    (error-page
+     {:status 403
+      :title  "Invalid anti-forgery token"})}))
 
 (defn wrap-formats [handler]
   (let [wrapped (-> handler wrap-params (wrap-format formats/instance))]
@@ -45,10 +43,24 @@
       ;; since they're not compatible with this middleware
       ((if (:websocket? request) handler wrapped) request))))
 
+;; Authentication
+
+(defn admin-access [req]
+  (contains? (get-in req [:session :user :roles]) :admin))
+
+(def rules [{:pattern #"^/admin/.*"
+             :handler admin-access}
+            ; TODO add other auth schemes
+            ;{:pattern [#"^/$" #"^/oauth/.*"]
+            ; :handler any-access}
+            ;{:pattern #"^/.*"
+            ; :handler user-access}
+            ])
+
 (defn on-error [request response]
   (error-page
-    {:status 403
-     :title  (str "Access to " (:uri request) " is not authorized")}))
+   {:status 403
+    :title  (str "Access to " (:uri request) " is not authorised")}))
 
 (defn wrap-restricted [handler]
   (restrict handler {:handler  authenticated?
@@ -63,11 +75,13 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-auth
+      (wrap-access-rules {:rules rules
+                          :on-error on-error})
       wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
-        (-> site-defaults
-            (assoc-in [:security :anti-forgery] false)
-            (dissoc :session)))
+       (-> site-defaults
+           (assoc-in [:security :anti-forgery] false)
+           (dissoc :session)))
       wrap-internal-error))
