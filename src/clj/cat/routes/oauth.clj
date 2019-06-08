@@ -66,17 +66,3 @@
               (log/warn (:cause (Throwable->map e)))
               (-> (found "/")
                   (assoc :flash {:error "An error occurred, please try again."})))))))))
-
-;(catch [:status 401] _
-;             (error-page {:status 401
-;                          :title "Error authenticating"
-;                          :message "Please contact your system administrator to fix this issue"}))
-
-; TODO catch using
-;(defn multiple-status-endpoint [req]
-;  (let [resp (do-external-request req)]
-;    (condp = (:status resp)
-;      201 (println ok)
-;      401 (println error))))
-
-

@@ -48,7 +48,9 @@
 (defn admin-access [req]
   (contains? (get-in req [:session :user :roles]) :admin))
 
-(def rules [{:pattern #"^/admin/.*"
+(def rules
+  "The authentication rules"
+  [{:pattern #"^/admin/.*"
              :handler admin-access}
             ; TODO add other auth schemes
             ;{:pattern [#"^/$" #"^/oauth/.*"]
@@ -57,26 +59,33 @@
             ; :handler user-access}
             ])
 
-(defn on-error [request response]
+(defn on-auth-error
+  [request response]
   (error-page
    {:status 403
     :title  (str "Access to " (:uri request) " is not authorised")}))
 
-(defn wrap-restricted [handler]
+(defn wrap-restricted
+  "Example of how to wrap a route or handling in an authentication scheme"
+  [handler]
   (restrict handler {:handler  authenticated?
-                     :on-error on-error}))
+                     :on-error on-auth-error}))
 
-(defn wrap-auth [handler]
+(defn wrap-auth
+  "Installs the session backend on ring"
+  [handler]
   (let [backend (session-backend)]
     (-> handler
         (wrap-authentication backend)
         (wrap-authorization backend))))
 
-(defn wrap-base [handler]
+(defn wrap-base
+  "The all default middleware functions. These get applied to every route."
+  [handler]
   (-> ((:middleware defaults) handler)
       wrap-auth
       (wrap-access-rules {:rules rules
-                          :on-error on-error})
+                          :on-error on-auth-error})
       wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
