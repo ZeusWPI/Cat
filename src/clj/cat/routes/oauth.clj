@@ -46,34 +46,36 @@
     (-> (found "/")
         (assoc :flash {:denied true}))
     ; fetch the request token and do anything else you wanna do if not denied.
-    (let [{:keys [access_token refresh_token]} (mo/get-authentication-response nil req_token)]
-      (log/debug "Successfully fetched access-id: " access_token)
-      (log/debug "Fetching user info")
-      (let [fetched-user (mo/get-user-info access_token)]
-        (log/debug "Fetched user info: " fetched-user)
-        (let [local-user (db/get-zeus-user {:zeusid (:id fetched-user)})]
-          (log/debug "Zeus user from db: " local-user)
-          (if local-user
-            (set-user! local-user session "/")
-            (try
-              (let [user-template {:name   (:username fetched-user)
-                                   :gender nil
-                                   :zeusid (:id fetched-user)}
-                    generated-key (-> user-template
-                                      (db/create-user!))]
-                (log/debug "Created user: " generated-key)
-                (set-user! (assoc user-template :id (:generated_key generated-key)) session "/"))
-              (catch Exception e
-                (do
-                  (log/warn "fetched user" fetched-user "already exists, but was not found")
-                  (log/warn (:cause (Throwable->map e)))
-                  (-> (found "/")
-                      (assoc :flash {:error "An error occurred, please try again."})))))))))))
+    (let [{:keys [access_token refresh_token]} (mo/get-authentication-response nil req_token)
+          fetched-user (mo/get-user-info access_token)
+          local-user (db/get-zeus-user {:zeusid (:id fetched-user)})]
+      (if local-user
+        (set-user! local-user session "/")
+        (try
+          (let [user-template {:name   (:username fetched-user)
+                               :gender nil
+                               :zeusid (:id fetched-user)}
+                generated-key (-> user-template
+                                  (db/create-user!))]
+            (set-user! (assoc user-template :id (:generated_key generated-key)) session "/"))
+          (catch Exception e
+            (do
+              (log/warn "fetched user" fetched-user "already exists, but was not found")
+              (log/warn (:cause (Throwable->map e)))
+              (-> (found "/")
+                  (assoc :flash {:error "An error occurred, please try again."})))))))))
 
 ;(catch [:status 401] _
 ;             (error-page {:status 401
 ;                          :title "Error authenticating"
 ;                          :message "Please contact your system administrator to fix this issue"}))
+
+; TODO catch using
+;(defn multiple-status-endpoint [req]
+;  (let [resp (do-external-request req)]
+;    (condp = (:status resp)
+;      201 (println ok)
+;      401 (println error))))
 
 
 (defroutes oauth-routes
