@@ -10,13 +10,13 @@
 (def admins [{:name "flynn" :zeusid 117}])
 
 (defn set-user! [user session redirect-url]
-  (log/info "Set user in session: " user)
+  (log/debug "Set user in session: " user)
   (let [new-session (-> session
                         (assoc :user user)
                         (cond-> (some (partial = (select-keys user [:zeusid :name])) admins)
-                                (->
-                                  (assoc-in [:user :admin] {:enabled false})
-                                  (assoc :identity "foo"))))]
+                          (->
+                           (assoc-in [:user :admin] {:enabled false})
+                           (assoc :identity "foo"))))]
     (-> (found redirect-url)
         (assoc :session new-session))))
 
@@ -32,7 +32,7 @@
   "Initiates the Twitter OAuth"
   [request]
   (let [reee (mo/authorize-api-uri)]
-    (log/info "authorize uri: " reee)
+    (log/debug "authorize uri: " reee)
     (-> reee
         found)))
 
@@ -47,12 +47,12 @@
         (assoc :flash {:denied true}))
     ; fetch the request token and do anything else you wanna do if not denied.
     (let [{:keys [access_token refresh_token]} (mo/get-authentication-response nil req_token)]
-      (log/info "Successfully fetched access-id: " access_token)
-      (log/info "Fetching user info")
+      (log/debug "Successfully fetched access-id: " access_token)
+      (log/debug "Fetching user info")
       (let [fetched-user (mo/get-user-info access_token)]
-        (log/info "Fetched user info: " fetched-user)
+        (log/debug "Fetched user info: " fetched-user)
         (let [local-user (db/get-zeus-user {:zeusid (:id fetched-user)})]
-          (log/info "Zeus user from db: " local-user)
+          (log/debug "Zeus user from db: " local-user)
           (if local-user
             (set-user! local-user session "/")
             (try
@@ -60,16 +60,15 @@
                                    :gender nil
                                    :zeusid (:id fetched-user)}
                     generated-key (-> user-template
-                                      (db/create-user!,,,))]
-                (log/info "Created user: " generated-key)
+                                      (db/create-user!))]
+                (log/debug "Created user: " generated-key)
                 (set-user! (assoc user-template :id (:generated_key generated-key)) session "/"))
               (catch Exception e
                 (do
                   (log/warn "fetched user" fetched-user "already exists, but was not found")
                   (log/warn (:cause (Throwable->map e)))
                   (-> (found "/")
-                      (assoc :flash {:error "An error occurred, please try again."})))
-                ))))))))
+                      (assoc :flash {:error "An error occurred, please try again."})))))))))))
 
 ;(catch [:status 401] _
 ;             (error-page {:status 401
@@ -78,12 +77,6 @@
 
 
 (defroutes oauth-routes
-           (GET "/oauth/oauth-init" req (oauth-init req))
-           (GET "/oauth/oauth-callback" [& req_token :as req] (oauth-callback req_token req))
-           (GET "/logout" req (clear-session! "/")))
-
-(defroutes admin-routes
-           (GET "/admin/enable" req (-> (found "/")
-                                        (assoc :session (assoc-in (:session req) [:user :admin :enabled] true))))
-           (GET "/admin/disable" req (-> (found "/")
-                                         (assoc :session (assoc-in (:session req) [:user :admin :enabled] false)))))
+  (GET "/oauth/oauth-init" req (oauth-init req))
+  (GET "/oauth/oauth-callback" [& req_token :as req] (oauth-callback req_token req))
+  (GET "/logout" req (clear-session! "/")))

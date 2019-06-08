@@ -9,14 +9,6 @@
             [cat.layout :refer [error-page]]
             [clojure.string :as s]))
 
-(def user-schema
-  [[:name st/required st/string]
-   [:gender st/string]])
-
-(def relation-schema
-  [[:from_id st/required st/integer-str]
-   [:to_id st/required st/integer-str]])
-
 (def request_relation-schema
   [[:to_id st/required st/integer-str]])
 
@@ -53,7 +45,7 @@
                    rel-requests-out (seq (db/get-relation-requests-from-user {:from_id (:id user)}))
                    rel-requests-in (seq (db/get-relation-requests-to-user {:to_id (:id user)}))
                    non_requested_users (seq (filter (fn [other-user] (not (some (partial = (:id other-user)) (map :to_id rel-requests-out)))) other_users))]
-               (log/info (str "Session: " (:session req)))
+               (log/debug (str "Session: " (:session req)))
                ;(log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
                ;(log/info (str "User relations: " user-relations))
                ;(log/info (str "Other Users: " other_users))
@@ -118,7 +110,7 @@
                (if (nil? from-id) (response/found (error-page
                                                     {:status 400
                                                      :title  "No user id found in session"})))
-               (log/info "Post to " (:uri req) "\n with data " result)
+               (log/debug "Post to " (:uri req) "\n with data " result)
                (if (nil? err)
                  (do
                    (log/debug "Create relation request")
@@ -129,28 +121,7 @@
                  (do
                    (log/debug "Relation request failed")
                    (log/debug err)
-                   (response/unprocessable-entity "Incorrect input")))))
-
-           ; TODO make bottom 2 admin protected
-           (POST "/relations" req
-             (let [data (:params req) [err result] (st/validate data relation-schema)]
-               (log/info "Post to " (:uri req))
-               (if (nil? err)
-                 (do
-                   (db/create-relation! result)
-                   (response/found "/"))
-                 (do
-                   (response/bad-request "Incorrect input")))))
-           (POST "/users" req
-             (let [data (:params req)]
-               (log/info "Post to " (:uri req))
-               (println data)
-               (if (st/valid? data user-schema)
-                 (do
-                   (db/create-user! (assoc data :zeusid nil))
-                   (response/found "/"))
-                 (do
-                   (response/bad-request "Incorrect input"))))))
+                   (response/unprocessable-entity "Incorrect input"))))))
 
 
 

@@ -18,8 +18,7 @@
 ; To authorize, redirect the user to the sign in / grant page
 
 (defn- authorize-uri
-  [client-params                                            ;csrf-token
-   ]
+  [client-params #_csrf-token]
   (str
     (:authorize-uri client-params)
     "?"
@@ -41,7 +40,7 @@
   "let the user authorize access by redirecting to the signin / grant page
  of the used oauth api"
   []
-  (log/info "Oauth params: " (oauth2-params))
+;  (log/info "Oauth params: " (oauth2-params))
   (authorize-uri (oauth2-params)))
 
 (defn get-authentication-response
@@ -50,7 +49,7 @@
   (if (or true (= csrf-token state))
     (try
       (do
-        (log/info "Requesting access token with code " code)
+        (log/debug "Requesting access token with code " code)
         (let [oauth2-params (oauth2-params)
               access-token (httpclient/post (:access-token-uri oauth2-params)
                                             {:form-params {:code          code
