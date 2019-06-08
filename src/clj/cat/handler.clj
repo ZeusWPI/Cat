@@ -1,7 +1,7 @@
 (ns cat.handler
   (:require [cat.middleware :as middleware]
             [cat.layout :refer [error-page]]
-            [cat.routes.home :refer [home-routes]]
+            [cat.routes.home :refer [show-home show-relations update-relationrequest-status create-relation-request]]
             [cat.routes.oauth :refer [oauth-init oauth-callback clear-session!]]
             [cat.routes.admin :refer [set-admin! create-new-relation! create-user!]]
             [compojure.core :refer [routes defroutes GET POST wrap-routes]]
@@ -15,6 +15,14 @@
   :start ((or (:init defaults) identity))
   :stop ((or (:stop defaults) identity)))
 
+(defroutes public-routes
+  (GET "/" req (show-home req))
+  (GET "/relations_zeroed" [] (show-relations)))
+
+(defroutes user-routes
+  (POST "/relation_request/:id/status" [id & body] (update-relationrequest-status id body)) ; STATUS ENUM: (open, accepted, rejected)
+  (POST "/request_relation" req (create-relation-request req)))
+
 (defroutes oauth-routes
   (GET "/oauth/oauth-init" req (oauth-init req))
   (GET "/oauth/oauth-callback" req (oauth-callback req))
@@ -27,12 +35,12 @@
   (POST "/users" req (create-user! req)))
 
 (defroutes app-routes
-  (-> home-routes
+  (-> public-routes
       middleware/wrap-csrf
       middleware/wrap-formats)
-  (-> oauth-routes)
-  (-> admin-routes
-      middleware/wrap-restricted)
+  user-routes
+  oauth-routes
+  admin-routes
   (route/not-found
    (:body
     (error-page {:status 404
