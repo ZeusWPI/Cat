@@ -29,7 +29,7 @@
       (assoc :session nil)))
 
 (defn oauth-init
-  "Initiates the Twitter OAuth"
+  "Initiates the OAuth"
   [request]
   (let [reee (mo/authorize-api-uri)]
     (log/debug "authorize uri: " reee)
@@ -40,13 +40,14 @@
   "Handles the callback from adams with the access_token
    Fetches the user from the database, creating a new one if not found
    Sets the user in the session and redirects back to origin \"/\" "
-  [req_token {:keys [params session]}]
+
+  [{:keys [params session]}]
   ; oauth request was denied by user
   (if (:denied params)
     (-> (found "/")
         (assoc :flash {:denied true}))
     ; fetch the request token and do anything else you wanna do if not denied.
-    (let [{:keys [access_token refresh_token]} (mo/get-authentication-response nil req_token)
+    (let [{:keys [access_token refresh_token]} (mo/get-authentication-response nil params)
           fetched-user (mo/get-user-info access_token)
           local-user (db/get-zeus-user {:zeusid (:id fetched-user)})]
       (if local-user
@@ -78,7 +79,3 @@
 ;      401 (println error))))
 
 
-(defroutes oauth-routes
-  (GET "/oauth/oauth-init" req (oauth-init req))
-  (GET "/oauth/oauth-callback" [& req_token :as req] (oauth-callback req_token req))
-  (GET "/logout" req (clear-session! "/")))
