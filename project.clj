@@ -1,4 +1,4 @@
-(defproject cat "0.1.0-SNAPSHOT"
+(defproject cat "0.1.1-SNAPSHOT"
 
   :description "A cuddle graph for zeus people"
                                         ;:url "http://example.com/FIXME"
