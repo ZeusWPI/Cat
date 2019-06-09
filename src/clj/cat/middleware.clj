@@ -65,10 +65,10 @@
    {:status 403
     :title  (str "Access to " (:uri request) " is not authorised")}))
 
-(defn wrap-restricted
+(defn wrap-restricted-admin
   "Example of how to wrap a route or handling in an authentication scheme"
   [handler]
-  (restrict handler {:handler  authenticated?
+  (restrict handler {:handler  admin-access
                      :on-error on-auth-error}))
 
 (defn wrap-auth
