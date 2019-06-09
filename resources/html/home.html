@@ -375,16 +375,17 @@
 {% style "/assets/font-awesome/css/all.css" %}
 {% style "/css/screen.css" %}
 
-{% script "/js/vendor/vega-4.4.0.js" %}
+{% style "/css/vendor/vis.min.css" %}
+{% script "js/vendor/vis.min.js" %}
+{% script "/assets/font-awesome/js/all.js" %}
 
 {% script "/js/home.js" %}
-{% script "/assets/font-awesome/js/all.js" %}
 
 <script type="text/javascript">
     var csrfToken = "{{csrf-token}}";
 </script>
 {% script "/js/app.js" %} <!-- Compiled clojurescript -->
 
-{% script "/js/graphing.js" %} <!-- Vega graphing -->
+{% script "/js/graphing.js" %} <!-- Graph graphing -->
 </body>
 </html>
