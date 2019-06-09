@@ -15,11 +15,6 @@
 (defn- home-page [params]
   (layout/render "home.html" params))
 
-(defn- get-relations []
-  (map
-   (fn [relation] (select-keys relation [:name :name_2]))
-   (db/get-relations)))
-
 (defn- get-users []
   (db/get-users))
 
@@ -30,33 +25,43 @@
 
 (defn show-home [req]
   (let [users (get-users)
-        relations (get-relations)
-        user (-> (get-in req [:session :user]))
+        relations (db/get-relations)
+        user (get-in req [:session :user])
         user-relations (when user
-                         (seq (filter (fn [rel]
+                         ;; This can probably be compacted to one reduce operation
+                         ;; -> filter for only our relations, remove our name
+                         (->> relations
+                              (filter (fn [rel]
                                         (or
-                                         (= (:name rel) (:name user))
-                                         (= (:name_2 rel) (:name user))))
-                                      relations)))
+                                         (= (:from_name rel) (:name user))
+                                         (= (:to_name rel) (:name user)))))
+                              (map (fn [rel] (if (= (:from_name rel) (:name user))
+                                               (-> rel
+                                                   (assoc :other_name (:to_name rel))
+                                                   (assoc :other_id (:to_id rel)))
+                                               (-> rel
+                                                   (assoc :other_name (:from_name rel))
+                                                   (assoc :other_id (:from_id rel))))))))
         other_users (when user
-                      (seq (filter (fn [usr] (not (= (:id usr) (:id user))))
-                                   users)))
-        rel-requests-out (seq (db/get-relation-requests-from-user {:from_id (:id user)}))
-        rel-requests-in (seq (db/get-relation-requests-to-user {:to_id (:id user)}))
-        non_requested_users (seq (filter (fn [other-user] (not (some (partial = (:id other-user)) (map :to_id rel-requests-out)))) other_users))]
+                      (filter (fn [usr] (not (= (:id usr) (:id user))))
+                              users))
+        rel-requests-out (db/get-relation-requests-from-user {:from_id (:id user)})
+        rel-requests-in (db/get-relation-requests-to-user {:to_id (:id user)})
+        ;; This can be done in one SQL query but since we already have the data for the other operations...
+        non_connected_users (filter (fn [other_user] (not (some (partial = (:id other_user))
+                                                                (concat
+                                                                 (map :from_id rel-requests-in)
+                                                                 (map :to_id rel-requests-out)
+                                                                 (map :other_id user-relations)))))
+                                    other_users)]
     (log/debug (str "Session: " (:session req)))
-               ;(log/info (str "Relation requests: \n OUTGOING: " rel-requests-out "\n INCOMING: " rel-requests-in))
-               ;(log/info (str "User relations: " user-relations))
-               ;(log/info (str "Other Users: " other_users))
-               ;(log/info (str "rel reqs out: " rel-requests-out))
-               ;(log/info (str "rel reqs out id: " (seq (map :to_id rel-requests-out))))
     (home-page {:relations        relations
                 :users            users
                 :user             user
                 :user-relations   user-relations
                 :rel-requests-out rel-requests-out
                 :rel-requests-in  rel-requests-in
-                :non_requested_users non_requested_users
+                :non_connected_users non_connected_users
                 :flash            (:flash req)})))
 
 (defn show-relations

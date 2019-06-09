@@ -105,7 +105,7 @@
             <div class="card">
                 <header class="card-header">
                     <p class="card-header-title">
-                        Your cuddles
+                        Your hugs
                     </p>
                 </header>
 
@@ -114,15 +114,13 @@
                         <table class="table">
                             <thead>
                             <tr>
-                                <th>Person 1</th>
-                                <th>Person 2</th>
+                                <th>With</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for relation in user-relations %}
                             <tr>
-                                <td>{{relation.name}}</td>
-                                <td>{{relation.name_2}}</td>
+                                <td>{{relation.other_name}}</td>
                             </tr>
                             {% endfor %}
                             </tbody>
@@ -147,14 +145,14 @@
                                     <div class="select">
                                         <select name="to_id" id="to_id">
                                             <option hidden disabled selected value> -- select an option -- </option>
-                                            {% for user in non_requested_users %}
+                                            {% for user in non_connected_users %}
                                             <option value="{{user.id}}">{{user.name}}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
                                 </div>
                                 <div class="control">
-                                    <input class="button is-link" type="submit" value="Request cuddle!">
+                                    <input class="button is-link" type="submit" value="Request hug!">
                                 </div>
                             </div>
                         </form>
@@ -283,9 +281,9 @@
             </table>
         </div>
         <div class="column">
-            <h3 class="title is-3">Cozy cuddles</h3>
+            <h3 class="title is-3">Cozy hugs</h3>
             <div>
-                <h3 class="subtitle is-4">Add cuddle</h3>
+                <h3 class="subtitle is-4">Add hug</h3>
                 <form action="/relations" method="post">
                     {% csrf-field %}
                     <div class="field">
@@ -319,15 +317,15 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>Person 1</th>
-                    <th>Person 2</th>
+                    <th>From</th>
+                    <th>To</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for relation in relations %}
                 <tr>
-                    <td>{{relation.name}}</td>
-                    <td>{{relation.name_2}}</td>
+                    <td>{{relation.from_name}}</td>
+                    <td>{{relation.to_name}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>

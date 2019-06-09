@@ -20,7 +20,7 @@
   (GET "/relations_zeroed" [] (show-relations)))
 
 (defroutes user-routes
-  (POST "/relation_request/:id/status" [id & body] (update-relationrequest-status id body)) ; STATUS ENUM: (open, accepted, rejected)
+  (POST "/relation_request/:id/status" [id & body :as req] (update-relationrequest-status id body req)) ; STATUS ENUM: (open, accepted, rejected)
   (POST "/request_relation" req (create-relation-request req)))
 
 (defroutes oauth-routes
