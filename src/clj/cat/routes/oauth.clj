@@ -16,8 +16,7 @@
                         (cond-> (some (partial = (select-keys user [:zeusid :name])) admins)
                           (->
                            (assoc-in [:user :admin] {:enabled false})
-                           (assoc-in [:user :roles] #{:admin})
-                           (assoc :identity "foo"))))]
+                           (assoc-in [:user :roles] #{:admin}))))]
     (-> (found redirect-url)
         (assoc :session new-session))))
 
