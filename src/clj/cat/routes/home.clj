@@ -85,38 +85,46 @@
                   :links rels-indexed})))
 
 (defn update-relationrequest-status
-  [id body]
-  (let [rr_id_map {:id id}
-        success (cond
-                  (contains? body :accept)
-                  (do
-                    (let [rr (db/get-relation-request rr_id_map)]
-                      (db/create-relation! {:from_id (:from_id rr) :to_id (:to_id rr)}))
-                    (db/update-relation-request-status! (assoc rr_id_map :status "accepted")))
-                  (contains? body :decline)
-                  (db/update-relation-request-status! (assoc rr_id_map :status "declined"))
-                  :else false)]
-    (if success
-      (response/found "/")
-      (response-wrong-parameters))))
+  "Updates the status of a relationship request"
+  [id body {:keys [:session]}]
+  (let [rr (db/get-relation-request {:id id})]
+      ; Check that you are authorized to change this request
+    (if-not (= (:to_id rr) (get-in session [:user :id]))
+      (response/unauthorized "You can only update requests send to you")
+      (if-not (= "open" (:status rr))
+        (response/gone "Request is not open anymore")
+        (let [correct-params?
+              (cond
+                (contains? body :accept)
+                (do
+                  (db/create-relation! (select-keys rr [:from_id :to_id]))
+                  (db/update-relation-request-status! {:id id :status "accepted"}))
+                (contains? body :decline)
+                (db/update-relation-request-status! {:id id :status "declined"})
+                :else false)]
+          (if correct-params?
+            (response/found "/")
+            (response-wrong-parameters)))))))
 
 (defn create-relation-request
-  [req]
-  (let [data (:params req)
-        [err result] (st/validate data request_relation-schema)
-        from-id (get-in req [:session :user :id])]
-    (if (nil? from-id) (response/found (error-page
-                                        {:status 400
-                                         :title  "No user id found in session"})))
-    (log/debug "Post to " (:uri req) "\n with data " result)
-    (if (nil? err)
-      (do
-        (log/debug "Create relation request")
-        (db/create-relation-request! {:from_id from-id
-                                      :to_id   (:to_id result)
-                                      :status  "open"})
-        (response/found "/"))
-      (do
-        (log/debug "Relation request failed")
-        (log/debug err)
-        (response/unprocessable-entity "Incorrect input")))))
+  "Creates a new request, as requests are unidirectional,
+  this gets denied if there is a request pending or a relation already established"
+  [{:keys [:params :session :uri]}]
+  (let [[err result] (st/validate params request_relation-schema)
+        from_id (get-in session [:user :id])
+        to_id (:to_id result)]
+    (if (= from_id to_id)
+      (response/unprocessable-entity "Sadly enough, you can't hug yourself :'(")
+      (if-not (nil? err)
+        (response/unprocessable-entity "Incorrect input")
+        (let [count (db/get-connection-existence {:user_id from_id :other_id to_id})]
+          (if-not (= 0 (:count count))
+            (do
+              (log/info "Existing connections found, aborting.")
+              (response/conflict "There is already a request or relation between you and the other user"))
+            (do
+              (log/debug "Create relation request")
+              (db/create-relation-request! {:from_id from_id
+                                            :to_id   to_id
+                                            :status  "open"})
+              (response/found "/"))))))))
