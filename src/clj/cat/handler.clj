@@ -19,7 +19,7 @@
   (GET "/" req (show-home req))
   (GET "/relations_zeroed" [] (show-relations)))
 
-(defroutes user-routes
+(defroutes user-routes ;; These are protect inside their respective functions
   (POST "/relation_request/:id/status" [id & body :as req] (update-relationrequest-status id body req)) ; STATUS ENUM: (open, accepted, rejected)
   (POST "/request_relation" req (create-relation-request req)))
 
@@ -40,7 +40,8 @@
       middleware/wrap-formats)
   user-routes
   oauth-routes
-  admin-routes
+  (-> admin-routes
+      middleware/wrap-restricted-admin)
   (route/not-found
    (:body
     (error-page {:status 404
@@ -50,4 +51,3 @@
   :start
   (-> app-routes
       middleware/wrap-base))
-
