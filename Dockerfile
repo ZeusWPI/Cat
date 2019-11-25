@@ -1,7 +1,16 @@
-FROM openjdk:8-alpine
+FROM clojure:lein-alpine
 
-COPY target/uberjar/cat.jar /cat/app.jar
+COPY project.clj .
+
+RUN lein deps
 
 EXPOSE 3000
 
-CMD ["java", "-jar", "/cat/app.jar"]
+COPY ./ /cat
+WORKDIR /cat
+
+ENV DATABASE_URL jdbc:mysql://192.168.2.1:3306/cat_dev?user=cat_user&password=C1t&serverTimezone=UTC
+
+RUN lein uberjar
+
+CMD ["java", "-jar", "target/uberjar/cat.jar"]
