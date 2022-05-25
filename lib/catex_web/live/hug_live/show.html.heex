@@ -1,0 +1,21 @@
+<h1>Show Hug</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.hug_show_path(@socket, :show, @hug)}>
+    <.live_component
+      module={CatexWeb.HugLive.FormComponent}
+      id={@hug.id}
+      title={@page_title}
+      action={@live_action}
+      hug={@hug}
+      return_to={Routes.hug_show_path(@socket, :show, @hug)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.hug_show_path(@socket, :edit, @hug), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.hug_index_path(@socket, :index) %></span>
