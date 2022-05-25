@@ -5,7 +5,7 @@ defmodule Catex.Hugs.Hug do
   alias Catex.Hugs.HugParticipant
 
   schema "hugs" do
-    has_many :hug_participants, HugParticipant
+    has_many :participants, HugParticipant
 
     timestamps()
   end

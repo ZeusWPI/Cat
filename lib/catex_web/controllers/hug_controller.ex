@@ -17,7 +17,7 @@ defmodule CatexWeb.HugController do
                |> Enum.map(fn u -> %{index: u.id, name: u.name} end),
         links: Enum.flat_map(
           hugs,
-          &(Combination.combine(&1.hug_participants, 2)
+          &(Combination.combine(&1.participants, 2)
             |> Enum.map(fn [a, b] -> %{source: a.user_id, target: b.user_id} end))
         )
       }

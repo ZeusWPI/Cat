@@ -57,6 +57,7 @@ defmodule CatexWeb.Router do
     pipe_through :browser
 
     resources "/users", UserController
+    resources "/hugs", HugController
   end
 
   # Enables the Swoosh mailbox preview in development.

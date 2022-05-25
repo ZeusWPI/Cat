@@ -1,0 +1,47 @@
+<section id="torch-toolbar">
+  <div class="torch-container">
+    <%= link "New Hug", to: Routes.admin_hug_path(@conn, :new) %>
+  </div>
+</section>
+<section id="torch-index-content">
+  <div class="torch-container">
+    <section id="torch-filters">
+      <h3>Find Hugs</h3>
+      <%= form_tag @conn.request_path, method: :get, id: "torch-filters-form" do %>
+        <button type="submit" class="torch-button">Search</button>
+        <%= link "Clear Filters", to: Routes.admin_hug_path(@conn, :index) %>
+      <% end %>
+
+    </section>
+
+    <section id="torch-table">
+    <%= if length(@hugs) > 0 do %>
+      <table>
+        <thead>
+          <tr>
+            <th><span>ID</span></th>
+            <th><span>Participants</span></th>
+            <th><span>Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for hug <- @hugs do %>
+            <tr>
+              <td><%= hug.id %></td>
+              <td><%= hug.participants |> Enum.map(&("#{&1.user.name} (#{&1.status})")) |> Enum.join("; ") %></td>
+              <td class="torch-actions">
+                <span><%= link "Show", to: Routes.admin_hug_path(@conn, :show, hug) %></span>
+                <span><%= link "Edit", to: Routes.admin_hug_path(@conn, :edit, hug) %></span>
+                <span><%= link "Delete", to: Routes.admin_hug_path(@conn, :delete, hug), method: :delete, data: [confirm: "Are you sure?"] %></span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= render Torch.PaginationView, "_pagination.html", assigns %>
+    <% else %>
+      <p class="torch-no-data">No Hugs match your search.</p>
+    <% end %>
+    </section>
+  </div>
+</section>

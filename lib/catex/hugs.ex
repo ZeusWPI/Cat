@@ -60,10 +60,10 @@ defmodule Catex.Hugs do
   # N+1 query -> worries for later
   def list_hugs_completed do
     Repo.all from h in Hug,
-             join: hp in assoc(h, :hug_participants),
+             join: hp in assoc(h, :participants),
              where: h.id not in subquery(participants_unconfirmed),
              preload: [
-               hug_participants: hp
+               participants: hp
              ]
   end
 
@@ -146,5 +146,78 @@ defmodule Catex.Hugs do
   """
   def change_hug(%Hug{} = hug, attrs \\ %{}) do
     Hug.changeset(hug, attrs)
+  end
+
+
+  import Torch.Helpers, only: [sort: 1, paginate: 4, strip_unset_booleans: 3]
+  import Filtrex.Type.Config
+
+  @pagination [page_size: 15]
+  @pagination_distance 5
+
+  @doc """
+  Paginate the list of hugs using filtrex
+  filters.
+
+  ## Examples
+
+      iex> paginate_hugs(%{})
+      %{hugs: [%Hug{}], ...}
+
+  """
+  @spec paginate_hugs(map) :: {:ok, map} | {:error, any}
+  def paginate_hugs(params \\ %{}) do
+    params =
+      params
+      |> strip_unset_booleans("hug", [])
+      |> Map.put_new("sort_direction", "desc")
+      |> Map.put_new("sort_field", "inserted_at")
+
+    {:ok, sort_direction} = Map.fetch(params, "sort_direction")
+    {:ok, sort_field} = Map.fetch(params, "sort_field")
+
+    with {:ok, filter} <- Filtrex.parse_params(filter_config(:hugs), params["hug"] || %{}),
+         %Scrivener.Page{} = page <- do_paginate_hugs(filter, params) do
+      {
+        :ok,
+        %{
+          hugs: page.entries,
+          page_number: page.page_number,
+          page_size: page.page_size,
+          total_pages: page.total_pages,
+          total_entries: page.total_entries,
+          distance: @pagination_distance,
+          sort_field: sort_field,
+          sort_direction: sort_direction
+        }
+      }
+    else
+      {:error, error} -> {:error, error}
+      error -> {:error, error}
+    end
+  end
+
+  defp do_paginate_hugs(filter, params) do
+    Hug
+    |> Filtrex.query(filter)
+    |> order_by(^sort(params))
+    |> join(:left, [hug], participants in assoc(hug, :participants))
+    |> join(:left, [hug, participants], user in assoc(participants, :user))
+    |> preload(
+         [hug, participants, user],
+         [
+           participants: {
+             participants,
+             user: user
+           }
+         ]
+       )
+    |> paginate(Repo, params, @pagination)
+  end
+
+  defp filter_config(:hugs) do
+    defconfig do
+
+    end
   end
 end
