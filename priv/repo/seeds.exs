@@ -14,5 +14,4 @@ f = Catex.Repo.insert!(%Catex.Users.User{name: "flynn", zeus_id: 1, admin: true}
 h = Catex.Repo.insert!(%Catex.Users.User{name: "hannah", zeus_id: 2, admin: false})
 s = Catex.Repo.insert!(%Catex.Users.User{name: "sammy", zeus_id: 3, admin: false})
 
-
-#Catex.Repo.insert!(%Catex.Hugs.Hug{participants: [f, h]})
+# Catex.Repo.insert!(%Catex.Hugs.Hug{participants: [f, h]})

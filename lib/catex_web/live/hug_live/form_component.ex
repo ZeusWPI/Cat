@@ -16,21 +16,21 @@ defmodule CatexWeb.HugLive.FormComponent do
       |> assign(assigns)
       |> assign(:changeset, changeset)
       |> assign(
-           :users,
-           Users.list_users()
-           |> Enum.map(&{&1.name, &1.id})
-         )
+        :users,
+        Users.list_users()
+        |> Enum.map(&{&1.name, &1.id})
+      )
       |> assign(
-           :status_opts,
-           [
-             {"Consent pending", "consent_pending"},
-             {"Consent given", "consent_given"},
-             {"Consent denied", "consent_denied"},
-             {"Hug pending", "hug_pending"},
-             {"Hug confirmed", "hug_confirmed"},
-             {"Hug denied", "hug_denied"}
-           ]
-         )
+        :status_opts,
+        [
+          {"Consent pending", "consent_pending"},
+          {"Consent given", "consent_given"},
+          {"Consent denied", "consent_denied"},
+          {"Hug pending", "hug_pending"},
+          {"Hug confirmed", "hug_confirmed"},
+          {"Hug denied", "hug_denied"}
+        ]
+      )
     }
   end
 
@@ -40,12 +40,10 @@ defmodule CatexWeb.HugLive.FormComponent do
 
     participants =
       existing_participants
-      |> Enum.concat(
-           [
-             %HugParticipant{temp_id: get_temp_id(), status: 'consent_pending'}
-             #        Hugs.change_participant(%HugParticipant{}) # NOTE temp_id
-           ]
-         )
+      |> Enum.concat([
+        %HugParticipant{temp_id: get_temp_id(), status: 'consent_pending'}
+        #        Hugs.change_participant(%HugParticipant{}) # NOTE temp_id
+      ])
 
     changeset =
       socket.assigns.changeset
@@ -56,9 +54,10 @@ defmodule CatexWeb.HugLive.FormComponent do
 
   # JUST TO GENERATE A RANDOM STRING
   defp get_temp_id,
-       do: :crypto.strong_rand_bytes(5)
-           |> Base.url_encode64
-           |> binary_part(0, 5)
+    do:
+      :crypto.strong_rand_bytes(5)
+      |> Base.url_encode64()
+      |> binary_part(0, 5)
 
   @impl true
   def handle_event("validate", %{"hug" => hug_params}, socket) do

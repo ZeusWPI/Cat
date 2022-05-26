@@ -55,7 +55,8 @@ defmodule CatexWeb.Router do
       pipe_through :browser
 
       live_dashboard "/dashboard",
-                     metrics: CatexWeb.Telemetry
+        metrics: CatexWeb.Telemetry
+
       #                     additional_pages: [
       #                       _profiler: {PhoenixProfiler.Dashboard, []}
       # additional pages...

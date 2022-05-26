@@ -30,12 +30,12 @@ defmodule CatexWeb do
   def view do
     quote do
       use Phoenix.View,
-          root: "lib/catex_web/templates",
-          namespace: CatexWeb
+        root: "lib/catex_web/templates",
+        namespace: CatexWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller,
-             only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
 
       # Include shared imports and aliases for views
       unquote(view_helpers())
@@ -45,9 +45,9 @@ defmodule CatexWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-          layout: {CatexWeb.LayoutView, "live.html"}
+        layout: {CatexWeb.LayoutView, "live.html"}
 
-#      on_mount PhoenixProfiler
+      #      on_mount PhoenixProfiler
 
       unquote(view_helpers())
     end

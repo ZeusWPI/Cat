@@ -39,7 +39,7 @@ defmodule CatexWeb.Endpoint do
     plug Phoenix.CodeReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :catex
 
-#    plug PhoenixProfiler
+    #    plug PhoenixProfiler
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

@@ -11,6 +11,7 @@ defmodule CatexWeb.Admin.HugController do
     case Hugs.paginate_hugs(params) do
       {:ok, assigns} ->
         render(conn, "index.html", assigns)
+
       error ->
         conn
         |> put_flash(:error, "There was an error rendering Hugs. #{inspect(error)}")
@@ -23,12 +24,14 @@ defmodule CatexWeb.Admin.HugController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, hug_params) do # %{"hug" => hug_params}
+  # %{"hug" => hug_params}
+  def create(conn, hug_params) do
     case Hugs.create_hug(hug_params) do
       {:ok, %{model: hug}} ->
         conn
         |> put_flash(:info, "Hug created successfully.")
         |> redirect(to: Routes.admin_hug_path(conn, :show, hug))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -45,7 +48,8 @@ defmodule CatexWeb.Admin.HugController do
     render(conn, "edit.html", hug: hug, changeset: changeset)
   end
 
-  def update(conn, hug_params) do # %{"id" => id, "hug" => hug_params}
+  # %{"id" => id, "hug" => hug_params}
+  def update(conn, hug_params) do
     hug = Hugs.get_hug!(hug_params["id"])
 
     case Hugs.update_hug(hug, hug_params) do
@@ -53,6 +57,7 @@ defmodule CatexWeb.Admin.HugController do
         conn
         |> put_flash(:info, "Hug updated successfully.")
         |> redirect(to: Routes.admin_hug_path(conn, :show, hug))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", hug: hug, changeset: changeset)
     end

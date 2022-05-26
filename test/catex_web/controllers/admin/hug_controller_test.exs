@@ -14,14 +14,14 @@ defmodule CatexWeb.HugControllerTest do
 
   describe "index" do
     test "lists all hugs", %{conn: conn} do
-      conn = get conn, Routes.hug_path(conn, :index)
+      conn = get(conn, Routes.hug_path(conn, :index))
       assert html_response(conn, 200) =~ "Hugs"
     end
   end
 
   describe "new hug" do
     test "renders form", %{conn: conn} do
-      conn = get conn, Routes.hug_path(conn, :new)
+      conn = get(conn, Routes.hug_path(conn, :new))
       assert html_response(conn, 200) =~ "New Hug"
     end
   end
@@ -33,7 +33,7 @@ defmodule CatexWeb.HugControllerTest do
       assert %{id: id} = redirected_params(conn)
       assert redirected_to(conn) == Routes.hug_path(conn, :show, id)
 
-      conn = get conn, Routes.hug_path(conn, :show, id)
+      conn = get(conn, Routes.hug_path(conn, :show, id))
       assert html_response(conn, 200) =~ "Hug Details"
     end
 
@@ -47,7 +47,7 @@ defmodule CatexWeb.HugControllerTest do
     setup [:create_hug]
 
     test "renders form for editing chosen hug", %{conn: conn, hug: hug} do
-      conn = get conn, Routes.hug_path(conn, :edit, hug)
+      conn = get(conn, Routes.hug_path(conn, :edit, hug))
       assert html_response(conn, 200) =~ "Edit Hug"
     end
   end
@@ -59,7 +59,7 @@ defmodule CatexWeb.HugControllerTest do
       conn = put conn, Routes.hug_path(conn, :update, hug), hug: @update_attrs
       assert redirected_to(conn) == Routes.hug_path(conn, :show, hug)
 
-      conn = get conn, Routes.hug_path(conn, :show, hug)
+      conn = get(conn, Routes.hug_path(conn, :show, hug))
       assert html_response(conn, 200)
     end
 
@@ -73,10 +73,11 @@ defmodule CatexWeb.HugControllerTest do
     setup [:create_hug]
 
     test "deletes chosen hug", %{conn: conn, hug: hug} do
-      conn = delete conn, Routes.hug_path(conn, :delete, hug)
+      conn = delete(conn, Routes.hug_path(conn, :delete, hug))
       assert redirected_to(conn) == Routes.hug_path(conn, :index)
+
       assert_error_sent 404, fn ->
-        get conn, Routes.hug_path(conn, :show, hug)
+        get(conn, Routes.hug_path(conn, :show, hug))
       end
     end
   end

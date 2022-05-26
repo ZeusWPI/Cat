@@ -48,27 +48,33 @@ defmodule Catex.Hugs do
 
   """
   def list_hugs do
-    Repo.all from h in Hug,
-             join: hp in assoc(h, :participants),
-             preload: [
-               participants: hp
-             ]
+    Repo.all(
+      from h in Hug,
+        join: hp in assoc(h, :participants),
+        preload: [
+          participants: hp
+        ]
+    )
   end
 
   defp participants_unconfirmed() do
-    from HugParticipant
-         |> where([hp], hp.status != :hug_confirmed)
-         |> select([hp], hp.hug_id)
+    from(
+      HugParticipant
+      |> where([hp], hp.status != :hug_confirmed)
+      |> select([hp], hp.hug_id)
+    )
   end
 
   # N+1 query -> worries for later
   def list_hugs_completed do
-    Repo.all from h in Hug,
-             join: hp in assoc(h, :participants),
-             where: h.id not in subquery(participants_unconfirmed),
-             preload: [
-               participants: hp
-             ]
+    Repo.all(
+      from h in Hug,
+        join: hp in assoc(h, :participants),
+        where: h.id not in subquery(participants_unconfirmed),
+        preload: [
+          participants: hp
+        ]
+    )
   end
 
   @doc """
@@ -88,10 +94,10 @@ defmodule Catex.Hugs do
   def get_hug!(id) do
     Repo.one!(
       from h in Hug,
-      where: h.id == ^id,
-      preload: [
-        :participants
-      ]
+        where: h.id == ^id,
+        preload: [
+          :participants
+        ]
     )
   end
 
@@ -113,12 +119,10 @@ defmodule Catex.Hugs do
       |> Ecto.Multi.insert(:hug, %Hug{})
 
     multi
-    |> Ecto.Multi.merge(
-         fn %{hug: hug} ->
-           Ecto.Multi.new()
-           |> Ecto.Multi.insert(:participants, Ecto.build_assoc(hug, :participants))
-         end
-       )
+    |> Ecto.Multi.merge(fn %{hug: hug} ->
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:participants, Ecto.build_assoc(hug, :participants))
+    end)
     |> Catex.Repo.transaction()
 
     #    %Hug{}
@@ -172,7 +176,6 @@ defmodule Catex.Hugs do
   def change_hug(%Hug{} = hug, attrs \\ %{}) do
     Hug.changeset(hug, attrs)
   end
-
 
   import Torch.Helpers, only: [sort: 1, paginate: 4, strip_unset_booleans: 3]
   import Filtrex.Type.Config
@@ -229,20 +232,17 @@ defmodule Catex.Hugs do
     |> join(:left, [hug], participants in assoc(hug, :participants))
     |> join(:left, [hug, participants], user in assoc(participants, :user))
     |> preload(
-         [hug, participants, user],
-         [
-           participants: {
-             participants,
-             user: user
-           }
-         ]
-       )
+      [hug, participants, user],
+      participants: {
+        participants,
+        user: user
+      }
+    )
     |> paginate(Repo, params, @pagination)
   end
 
   defp filter_config(:hugs) do
     defconfig do
-
     end
   end
 end

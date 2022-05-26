@@ -42,6 +42,6 @@ defmodule CatexWeb.HugLive.Index do
 
   defp list_hugs do
     Hugs.list_hugs()
-    |> IO.inspect
+    |> IO.inspect()
   end
 end

@@ -86,7 +86,7 @@ defmodule Catex.Users do
   def get_user_by_zeus_id(zeus_id) do
     User
     |> where([u], u.zeus_id == ^zeus_id)
-    |> Repo.one
+    |> Repo.one()
   end
 
   @doc """
@@ -120,7 +120,7 @@ defmodule Catex.Users do
   def update_user_tokens(%User{} = user, access_token, refresh_token) do
     user
     |> User.changeset(%{access_token: access_token, refresh_token: refresh_token})
-    |> IO.inspect
+    |> IO.inspect()
     |> Repo.update()
   end
 
@@ -148,7 +148,6 @@ defmodule Catex.Users do
 
   defp filter_config(:users) do
     defconfig do
-
       text(:name)
       text(:zeus_id)
       text(:admin)
@@ -171,5 +170,4 @@ defmodule Catex.Users do
   #      |> Torch.Helpers.paginate(Repo, params, @pagination)
   #    }
   #  end
-
 end

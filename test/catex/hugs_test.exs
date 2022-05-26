@@ -89,5 +89,4 @@ defmodule Catex.HugsTest do
 
     hug
   end
-
 end

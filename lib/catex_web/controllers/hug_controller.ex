@@ -13,13 +13,15 @@ defmodule CatexWeb.HugController do
     json(
       conn,
       %{
-        nodes: Users.list_users()
-               |> Enum.map(fn u -> %{index: u.id, name: u.name} end),
-        links: Enum.flat_map(
-          hugs,
-          &(Combination.combine(&1.participants, 2)
-            |> Enum.map(fn [a, b] -> %{source: a.user_id, target: b.user_id} end))
-        )
+        nodes:
+          Users.list_users()
+          |> Enum.map(fn u -> %{index: u.id, name: u.name} end),
+        links:
+          Enum.flat_map(
+            hugs,
+            &(Combination.combine(&1.participants, 2)
+              |> Enum.map(fn [a, b] -> %{source: a.user_id, target: b.user_id} end))
+          )
       }
     )
   end

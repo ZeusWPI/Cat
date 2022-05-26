@@ -10,9 +10,7 @@ defmodule Catex.HugsFixtures do
   def hug_fixture(attrs \\ %{}) do
     {:ok, hug} =
       attrs
-      |> Enum.into(%{
-
-      })
+      |> Enum.into(%{})
       |> Catex.Hugs.create_hug()
 
     hug

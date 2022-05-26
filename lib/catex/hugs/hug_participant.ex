@@ -18,7 +18,8 @@ defmodule Catex.Hugs.HugParticipant do
   @doc false
   def changeset(hug_participant, attrs) do
     hug_participant
-    |> Map.put(:temp_id, (hug_participant.temp_id || attrs["temp_id"])) # So its persisted
+    # So its persisted
+    |> Map.put(:temp_id, hug_participant.temp_id || attrs["temp_id"])
     |> cast(attrs, [:hug, :user, :status])
     |> validate_required([:hug, :user, :status])
   end
