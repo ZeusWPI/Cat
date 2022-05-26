@@ -41,6 +41,7 @@ defmodule Catex.MixProject do
       {:paper_trail, "~> 0.14.3"},
       {:postgrex, ">= 0.0.0"},
       # {:kaffy, "~> 0.9.0"},
+      {:phoenix_profiler, "~> 0.1.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.17.5"},

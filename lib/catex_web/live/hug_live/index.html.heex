@@ -16,14 +16,14 @@
 <table>
   <thead>
     <tr>
-
+      <th>ID</th>
       <th></th>
     </tr>
   </thead>
   <tbody id="hugs">
     <%= for hug <- @hugs do %>
       <tr id={"hug-#{hug.id}"}>
-
+        <td><%= hug.id %></td>
         <td>
           <span><%= live_redirect "Show", to: Routes.hug_show_path(@socket, :show, hug) %></span>
           <span><%= live_patch "Edit", to: Routes.hug_index_path(@socket, :edit, hug) %></span>

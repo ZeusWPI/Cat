@@ -8,6 +8,7 @@ defmodule CatexWeb.Router do
     plug :put_root_layout, {CatexWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Catex.Authenticator
   end
 
   pipeline :api do
@@ -29,15 +30,16 @@ defmodule CatexWeb.Router do
     resources "/users", UserController
 
     get "/auth/login", AuthController, :login
+    get "/auth/logout", AuthController, :logout
     get "/auth/callback", AuthController, :callback
   end
 
   # Other scopes may use custom stacks.
-   scope "/api", CatexWeb do
-     pipe_through :api
+  scope "/api", CatexWeb do
+    pipe_through :api
 
-     get "/hugs", HugController, :index
-   end
+    get "/hugs", HugController, :index
+  end
 
   # Enables LiveDashboard only for development
   #
@@ -52,7 +54,12 @@ defmodule CatexWeb.Router do
     scope "/" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: CatexWeb.Telemetry
+      live_dashboard "/dashboard",
+                     metrics: CatexWeb.Telemetry
+      #                     additional_pages: [
+      #                       _profiler: {PhoenixProfiler.Dashboard, []}
+      # additional pages...
+      #                     ]
     end
   end
 

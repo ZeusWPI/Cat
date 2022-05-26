@@ -8,10 +8,10 @@ defmodule Catex.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Catex.Repo,
       # Start the Telemetry supervisor
       CatexWeb.Telemetry,
+      # Start the Ecto repository
+      Catex.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Catex.PubSub},
       # Start the Endpoint (http/https)

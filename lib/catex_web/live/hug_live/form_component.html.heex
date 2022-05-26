@@ -6,10 +6,27 @@
     for={@changeset}
     id="hug-form"
     phx-target={@myself}
-    phx-change="validate"
     phx-submit="save">
-  
-    <div>
+  <!--phx-change="validate"-->
+  <div>
+    <p class="mt-4 mb-2 font-bold">Participants</p>
+
+    <%= inputs_for f, :participants, fn v -> %>
+    <div class="flex flex-wrap -mx-1 overflow-hidden">
+
+      <!--<%= label v, :user_id %>-->
+      <%= select(v, :user_id, @users) %>
+      <!--<%= error_tag v, :user_id %>-->
+
+      <%= select(v, :status, @status_opts) %>
+
+    </div>
+    <% end %>
+
+    <a href="#" phx-target={@myself} phx-click="add_participant">Add a participant</a>
+
+  </div>
+  <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>
   </.form>

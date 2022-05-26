@@ -30,7 +30,7 @@
               <td><%= hug.id %></td>
               <td><%= hug.participants |> Enum.map(&("#{&1.user.name} (#{&1.status})")) |> Enum.join("; ") %></td>
               <td class="torch-actions">
-                <span><%= link "Show", to: Routes.admin_hug_path(@conn, :show, hug) %></span>
+                <span><%= link "Show", to: Routes.admin_hug_path(@conn, :show, hug, id: hug.id) %></span>
                 <span><%= link "Edit", to: Routes.admin_hug_path(@conn, :edit, hug) %></span>
                 <span><%= link "Delete", to: Routes.admin_hug_path(@conn, :delete, hug), method: :delete, data: [confirm: "Are you sure?"] %></span>
               </td>

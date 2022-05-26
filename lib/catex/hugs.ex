@@ -48,7 +48,11 @@ defmodule Catex.Hugs do
 
   """
   def list_hugs do
-    Repo.all(Hug)
+    Repo.all from h in Hug,
+             join: hp in assoc(h, :participants),
+             preload: [
+               participants: hp
+             ]
   end
 
   defp participants_unconfirmed() do
@@ -81,7 +85,15 @@ defmodule Catex.Hugs do
       ** (Ecto.NoResultsError)
 
   """
-  def get_hug!(id), do: Repo.get!(Hug, id)
+  def get_hug!(id) do
+    Repo.one!(
+      from h in Hug,
+      where: h.id == ^id,
+      preload: [
+        :participants
+      ]
+    )
+  end
 
   @doc """
   Creates a hug.
@@ -96,9 +108,22 @@ defmodule Catex.Hugs do
 
   """
   def create_hug(attrs \\ %{}) do
-    %Hug{}
-    |> Hug.changeset(attrs)
-    |> Repo.insert()
+    multi =
+      Ecto.Multi.new()
+      |> Ecto.Multi.insert(:hug, %Hug{})
+
+    multi
+    |> Ecto.Multi.merge(
+         fn %{hug: hug} ->
+           Ecto.Multi.new()
+           |> Ecto.Multi.insert(:participants, Ecto.build_assoc(hug, :participants))
+         end
+       )
+    |> Catex.Repo.transaction()
+
+    #    %Hug{}
+    #    |> Hug.changeset(attrs)
+    #    |> PaperTrail.insert()
   end
 
   @doc """
@@ -116,7 +141,7 @@ defmodule Catex.Hugs do
   def update_hug(%Hug{} = hug, attrs) do
     hug
     |> Hug.changeset(attrs)
-    |> Repo.update()
+    |> PaperTrail.update()
   end
 
   @doc """
@@ -132,7 +157,7 @@ defmodule Catex.Hugs do
 
   """
   def delete_hug(%Hug{} = hug) do
-    Repo.delete(hug)
+    PaperTrail.delete(hug)
   end
 
   @doc """

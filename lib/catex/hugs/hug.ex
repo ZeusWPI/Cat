@@ -14,6 +14,7 @@ defmodule Catex.Hugs.Hug do
   def changeset(hug, attrs) do
     hug
     |> cast(attrs, [])
+    |> cast_assoc(:participants)
     |> validate_required([])
   end
 end

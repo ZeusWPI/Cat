@@ -3,9 +3,9 @@ defmodule Catex.Repo.Migrations.CreateUsers do
 
   def change do
     create table(:users) do
-      add :name, :string
+      add :name, :string, null: false
       add :zeus_id, :integer
-      add :admin, :boolean
+      add :admin, :boolean, null: false, default: false
       add :access_token, :string
       add :refresh_token, :string
 

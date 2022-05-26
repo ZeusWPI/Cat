@@ -26,24 +26,33 @@ defmodule CatexWeb.AuthController do
     redirect(conn, external: OAuth2.Client.authorize_url!(@client))
   end
 
+  def logout(conn, _params) do
+    put_session(conn, :user_id, nil)
+    |> redirect(to: "/")
+  end
+
   def callback(conn, %{"code" => code})do
     client = OAuth2.Client.get_token!(@client, code: code)
     resource = OAuth2.Client.get!(client, "/oauth/api/current_user").body
-    match = Users.get_user_by_zeus_id(resource["id"])
-    if match == [] do
+    user = Users.get_user_by_zeus_id(resource["id"])
+    if user == nil do
       Users.create_user(
         %{
+          name: resource["username"],
           zeus_id: resource["id"],
           admin: false,
-          name: resource["username"],
           access_token: client.token.access_token,
           refresh_token: client.token.refresh_token
         }
       )
     else
-      Users.update_user_tokens(hd(match), client.token.access_token, client.token.refresh_token)
+      Users.update_user_tokens(user, client.token.access_token, client.token.refresh_token)
     end
-    redirect(conn, to: "/")
+
+    u = Users.get_user_by_zeus_id(resource["id"])
+
+    put_session(conn, :user_id, u.id)
+    |> redirect(to: "/")
   end
 
 end

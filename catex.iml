@@ -64,6 +64,7 @@
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/torch" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/paper_trail" />
       <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/oauth2" />
+      <excludeFolder url="file://$MODULE_DIR$/_build/dev/lib/phoenix_profiler" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="phoenix" level="project" />
@@ -143,5 +144,6 @@
     <orderEntry type="library" name="vega-lite" level="application" />
     <orderEntry type="library" name="vis-network" level="application" />
     <orderEntry type="library" name="oauth2" level="project" />
+    <orderEntry type="library" name="phoenix_profiler" level="project" />
   </component>
 </module>

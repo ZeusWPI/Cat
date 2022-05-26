@@ -9,15 +9,17 @@ defmodule Catex.Repo.Migrations.CreateHugRelations do
     execute(create_query, drop_query)
 
     create table(:hug_participants) do
-      add :user_id, references(:users, on_delete: :nothing)
-      add :hug_id, references(:hugs, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :nothing), null: false
+      add :hug_id, references(:hugs, on_delete: :nothing), null: false
 
-      add :status, :hug_participant_status
+      add :status, :hug_participant_status, null: false
 
       timestamps()
     end
 
     create index(:hug_participants, [:user_id])
     create index(:hug_participants, [:hug_id])
+
+    create unique_index(:hug_participants, [:user_id, :hug_id])
   end
 end

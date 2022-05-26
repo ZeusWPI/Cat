@@ -23,13 +23,13 @@ defmodule CatexWeb.HugLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Hug")
-    |> assign(:hug, %Hug{})
+    |> assign(:hug, %Hug{participants: []})
   end
 
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Hugs")
-    |> assign(:hug, nil)
+    |> assign(:hugs, list_hugs())
   end
 
   @impl true
@@ -42,5 +42,6 @@ defmodule CatexWeb.HugLive.Index do
 
   defp list_hugs do
     Hugs.list_hugs()
+    |> IO.inspect
   end
 end

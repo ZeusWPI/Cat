@@ -14,7 +14,7 @@ defmodule CatexWeb.Admin.HugController do
       error ->
         conn
         |> put_flash(:error, "There was an error rendering Hugs. #{inspect(error)}")
-        |> redirect(to: Routes.hug_path(conn, :index))
+        |> redirect(to: Routes.admin_hug_path(conn, :index))
     end
   end
 
@@ -23,12 +23,12 @@ defmodule CatexWeb.Admin.HugController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"hug" => hug_params}) do
+  def create(conn, hug_params) do # %{"hug" => hug_params}
     case Hugs.create_hug(hug_params) do
-      {:ok, hug} ->
+      {:ok, %{model: hug}} ->
         conn
         |> put_flash(:info, "Hug created successfully.")
-        |> redirect(to: Routes.hug_path(conn, :show, hug))
+        |> redirect(to: Routes.admin_hug_path(conn, :show, hug))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -45,14 +45,14 @@ defmodule CatexWeb.Admin.HugController do
     render(conn, "edit.html", hug: hug, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "hug" => hug_params}) do
-    hug = Hugs.get_hug!(id)
+  def update(conn, hug_params) do # %{"id" => id, "hug" => hug_params}
+    hug = Hugs.get_hug!(hug_params["id"])
 
     case Hugs.update_hug(hug, hug_params) do
-      {:ok, hug} ->
+      {:ok, %{model: hug}} ->
         conn
         |> put_flash(:info, "Hug updated successfully.")
-        |> redirect(to: Routes.hug_path(conn, :show, hug))
+        |> redirect(to: Routes.admin_hug_path(conn, :show, hug))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", hug: hug, changeset: changeset)
     end
@@ -64,6 +64,6 @@ defmodule CatexWeb.Admin.HugController do
 
     conn
     |> put_flash(:info, "Hug deleted successfully.")
-    |> redirect(to: Routes.hug_path(conn, :index))
+    |> redirect(to: Routes.admin_hug_path(conn, :index))
   end
 end

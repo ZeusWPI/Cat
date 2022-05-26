@@ -81,11 +81,12 @@ defmodule Catex.Users do
       ** (Ecto.NoResultsError)
   """
   def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   def get_user_by_zeus_id(zeus_id) do
     User
     |> where([u], u.zeus_id == ^zeus_id)
-    |> Repo.all
+    |> Repo.one
   end
 
   @doc """
