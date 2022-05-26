@@ -18,6 +18,7 @@
               <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
             <% end %>
             <li><%= link "Admin", to: Routes.admin_user_path(@conn, :index) %></li>
+            <li><%= link "Login", to: Routes.auth_path(@conn, :login) %></li>
           </ul>
         </nav>
         <!--

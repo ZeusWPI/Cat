@@ -11,17 +11,32 @@
       <h3>User Details</h3>
     </header>
     <section class="torch-show-details">
-      
-        <div class="torch-show-attribute">
-          <div class="torch-show-label">Name:</div>
-          <div class="torch-show-data"><%= @user.name %></div>
-        </div>
-      
-        <div class="torch-show-attribute">
-          <div class="torch-show-label">Gender:</div>
-          <div class="torch-show-data"><%= @user.gender %></div>
-        </div>
-      
+
+      <div class="torch-show-attribute">
+        <div class="torch-show-label">Name:</div>
+        <div class="torch-show-data"><%= @user.name %></div>
+      </div>
+
+      <div class="torch-show-attribute">
+        <div class="torch-show-label">Zeus ID:</div>
+        <div class="torch-show-data"><%= @user.zeus_id %></div>
+      </div>
+
+      <div class="torch-show-attribute">
+        <div class="torch-show-label">Admin:</div>
+        <div class="torch-show-data"><%= @user.admin %></div>
+      </div>
+
+      <div class="torch-show-attribute">
+        <div class="torch-show-label">Access token:</div>
+        <div class="torch-show-data"><%= @user.access_token %></div>
+      </div>
+
+      <div class="torch-show-attribute">
+        <div class="torch-show-label">Refresh token:</div>
+        <div class="torch-show-data"><%= @user.refresh_token %></div>
+      </div>
+
     </section>
   </div>
 </section>

@@ -3,8 +3,11 @@ defmodule Catex.Users.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :gender, :string
     field :name, :string
+    field :zeus_id, :integer
+    field :admin, :boolean
+    field :access_token, :string
+    field :refresh_token, :string
 
     timestamps()
   end
@@ -12,7 +15,7 @@ defmodule Catex.Users.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :gender])
-    |> validate_required([:name, :gender])
+    |> cast(attrs, [:name, :zeus_id, :admin, :access_token, :refresh_token])
+    |> validate_required([:name, :zeus_id, :admin])
   end
 end

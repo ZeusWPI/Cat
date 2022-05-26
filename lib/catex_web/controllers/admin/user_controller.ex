@@ -51,7 +51,7 @@ defmodule CatexWeb.Admin.UserController do
     user = Users.get_user!(id)
 
     case Users.update_user(user, user_params) do
-      {:ok, user} ->
+      {:ok, %{:model => user}} ->
         conn
         |> put_flash(:info, "User updated successfully.")
         |> redirect(to: Routes.admin_user_path(conn, :show, user))

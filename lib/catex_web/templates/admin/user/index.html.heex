@@ -16,9 +16,9 @@
           </div>
         
           <div class="field">
-            <label>Gender</label>
-            <%= filter_select(:user, :gender, @conn.params) %>
-            <%= filter_string_input(:user, :gender, @conn.params) %>
+            <label>Admin</label>
+            <%= filter_select(:user, :admin, @conn.params) %>
+            <%= filter_string_input(:user, :admin, @conn.params) %>
           </div>
         
         
@@ -37,9 +37,11 @@
           <tr>
             
               <th><%= table_link(@conn, "Name", :name) %></th>
-            
-              <th><%= table_link(@conn, "Gender", :gender) %></th>
-            
+              <th><%= table_link(@conn, "Zeus ID", :zeus_id) %></th>
+              <th><%= table_link(@conn, "Admin", :admin) %></th>
+              <th><%= table_link(@conn, "Access token", :access_token) %></th>
+              <th><%= table_link(@conn, "Refresh token", :refresh_token) %></th>
+
             <th><span>Actions</span></th>
           </tr>
         </thead>
@@ -48,9 +50,11 @@
             <tr>
               
                 <td><%= user.name %></td>
-              
-                <td><%= user.gender %></td>
-              
+                <td><%= user.zeus_id %></td>
+                <td><%= user.admin %></td>
+                <td><%= user.access_token %></td>
+                <td><%= user.refresh_token %></td>
+
               <td class="torch-actions">
                 <span><%= link "Show", to: Routes.admin_user_path(@conn, :show, user) %></span>
                 <span><%= link "Edit", to: Routes.admin_user_path(@conn, :edit, user) %></span>

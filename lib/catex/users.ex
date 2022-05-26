@@ -82,6 +82,12 @@ defmodule Catex.Users do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user_by_zeus_id(zeus_id) do
+    User
+    |> where([u], u.zeus_id == ^zeus_id)
+    |> Repo.all
+  end
+
   @doc """
   Creates a user.
   ## Examples
@@ -110,6 +116,13 @@ defmodule Catex.Users do
     |> PaperTrail.update()
   end
 
+  def update_user_tokens(%User{} = user, access_token, refresh_token) do
+    user
+    |> User.changeset(%{access_token: access_token, refresh_token: refresh_token})
+    |> IO.inspect
+    |> Repo.update()
+  end
+
   @doc """
   Deletes a User.
   ## Examples
@@ -136,7 +149,8 @@ defmodule Catex.Users do
     defconfig do
 
       text(:name)
-      text(:gender)
+      text(:zeus_id)
+      text(:admin)
       #      <%= for {name, type} <- schema.attrs do %><%= cond do %>
       #        <% type in [:string, :text] -> %>text <%= inspect name %>
       #        <% type in [:integer, :number] -> %>number <%= inspect name %>

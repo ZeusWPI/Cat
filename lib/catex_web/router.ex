@@ -27,6 +27,9 @@ defmodule CatexWeb.Router do
     live "/hugs/:id/show/edit", HugLive.Show, :edit
 
     resources "/users", UserController
+
+    get "/auth/login", AuthController, :login
+    get "/auth/callback", AuthController, :callback
   end
 
   # Other scopes may use custom stacks.
