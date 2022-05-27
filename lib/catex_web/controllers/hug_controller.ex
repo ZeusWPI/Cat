@@ -1,4 +1,6 @@
 defmodule CatexWeb.HugController do
+  @moduledoc false
+
   use CatexWeb, :controller
 
   alias Catex.Hugs

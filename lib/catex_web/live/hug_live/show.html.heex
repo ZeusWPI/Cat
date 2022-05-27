@@ -14,7 +14,8 @@
 <% end %>
 
 <ul>
-
+  <li><%= @hug.id %></li>
+  <li><%= @hug.participants |> Enum.map(&("#{&1.user.name} (#{&1.status})")) |> Enum.join("; ") %></li>
 </ul>
 
 <span><%= live_patch "Edit", to: Routes.hug_show_path(@socket, :edit, @hug), class: "button" %></span> |

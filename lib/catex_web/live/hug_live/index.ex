@@ -1,12 +1,20 @@
 defmodule CatexWeb.HugLive.Index do
+  @moduledoc false
+
   use CatexWeb, :live_view
 
   alias Catex.Hugs
   alias Catex.Hugs.Hug
+  alias Catex.Users
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :hugs, list_hugs())}
+  def mount(_params, %{"user_id" => user_id} = _session, socket) do
+    {
+      :ok,
+      socket
+      |> assign(:hugs, list_hugs())
+      |> assign_new(:current_user, fn -> Users.get_user!(user_id) end)
+    }
   end
 
   @impl true
@@ -42,6 +50,5 @@ defmodule CatexWeb.HugLive.Index do
 
   defp list_hugs do
     Hugs.list_hugs()
-    |> IO.inspect()
   end
 end

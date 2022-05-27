@@ -9,6 +9,7 @@
       action={@live_action}
       hug={@hug}
       return_to={Routes.hug_index_path(@socket, :index)}
+      current_user={@current_user}
     />
   </.modal>
 <% end %>
@@ -17,13 +18,15 @@
   <thead>
     <tr>
       <th>ID</th>
-      <th></th>
+      <th><span>Participants</span></th>
+      <th><span>Actions</span></th>
     </tr>
   </thead>
   <tbody id="hugs">
     <%= for hug <- @hugs do %>
       <tr id={"hug-#{hug.id}"}>
         <td><%= hug.id %></td>
+        <td><%= hug.participants |> Enum.map(&("#{&1.user.name} (#{&1.status})")) |> Enum.join("; ") %></td>
         <td>
           <span><%= live_redirect "Show", to: Routes.hug_show_path(@socket, :show, hug) %></span>
           <span><%= live_patch "Edit", to: Routes.hug_index_path(@socket, :edit, hug) %></span>

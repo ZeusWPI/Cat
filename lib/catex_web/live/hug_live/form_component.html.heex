@@ -14,12 +14,19 @@
     <%= inputs_for f, :participants, fn v -> %>
     <div class="flex flex-wrap -mx-1 overflow-hidden">
 
-      <!--<%= label v, :user_id %>-->
+      <%= label v, :user_id %>
       <%= select(v, :user_id, @users) %>
-      <!--<%= error_tag v, :user_id %>-->
+      <%= error_tag v, :user_id %>
 
-      <%= select(v, :status, @status_opts) %>
+      <%= if @action == "edit" do %>
+        <%= select(v, :status, @status_opts) %>
+      <% end %>
 
+      <%= label v, :hug_id %>
+      <%= error_tag v, :hug_id %>
+
+      <%= label v, :status %>
+      <%= error_tag v, :status %>
     </div>
     <% end %>
 

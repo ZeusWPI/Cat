@@ -1,4 +1,6 @@
 defmodule CatexWeb.Router do
+  @moduledoc false
+
   use CatexWeb, :router
 
   pipeline :browser do

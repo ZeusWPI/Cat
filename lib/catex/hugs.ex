@@ -50,10 +50,11 @@ defmodule Catex.Hugs do
   def list_hugs do
     Repo.all(
       from h in Hug,
-        join: hp in assoc(h, :participants),
-        preload: [
-          participants: hp
-        ]
+      join: hp in assoc(h, :participants),
+      join: user in assoc(hp, :user),
+      preload: [
+        participants: [:user]
+      ]
     )
   end
 
@@ -69,11 +70,11 @@ defmodule Catex.Hugs do
   def list_hugs_completed do
     Repo.all(
       from h in Hug,
-        join: hp in assoc(h, :participants),
-        where: h.id not in subquery(participants_unconfirmed),
-        preload: [
-          participants: hp
-        ]
+      join: hp in assoc(h, :participants),
+      where: h.id not in subquery(participants_unconfirmed),
+      preload: [
+        participants: hp
+      ]
     )
   end
 
@@ -94,10 +95,10 @@ defmodule Catex.Hugs do
   def get_hug!(id) do
     Repo.one!(
       from h in Hug,
-        where: h.id == ^id,
-        preload: [
-          :participants
-        ]
+      where: h.id == ^id,
+      preload: [
+        participants: [:user]
+      ]
     )
   end
 
@@ -114,20 +115,24 @@ defmodule Catex.Hugs do
 
   """
   def create_hug(attrs \\ %{}) do
-    multi =
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert(:hug, %Hug{})
+    hug =
+      %Hug{}
+      |> Hug.changeset(attrs)
+      |> PaperTrail.insert()
+      |> IO.inspect
 
-    multi
-    |> Ecto.Multi.merge(fn %{hug: hug} ->
-      Ecto.Multi.new()
-      |> Ecto.Multi.insert(:participants, Ecto.build_assoc(hug, :participants))
-    end)
-    |> Catex.Repo.transaction()
-
-    #    %Hug{}
-    #    |> Hug.changeset(attrs)
-    #    |> PaperTrail.insert()
+    #    multi =
+    #      Ecto.Multi.new()
+    #      |> Ecto.Multi.insert(:hug, hug)
+    #
+    #    multi
+    #    |> Ecto.Multi.merge(
+    #         fn %{hug: hug} ->
+    #           Ecto.Multi.new()
+    #           |> Ecto.Multi.insert(:participants, Ecto.build_assoc(hug, :participants))
+    #         end
+    #       )
+    #    |> Catex.Repo.transaction()
   end
 
   @doc """
@@ -232,12 +237,12 @@ defmodule Catex.Hugs do
     |> join(:left, [hug], participants in assoc(hug, :participants))
     |> join(:left, [hug, participants], user in assoc(participants, :user))
     |> preload(
-      [hug, participants, user],
-      participants: {
-        participants,
-        user: user
-      }
-    )
+         [hug, participants, user],
+         participants: {
+           participants,
+           user: user
+         }
+       )
     |> paginate(Repo, params, @pagination)
   end
 

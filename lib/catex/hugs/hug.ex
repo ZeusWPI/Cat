@@ -1,4 +1,6 @@
 defmodule Catex.Hugs.Hug do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -14,7 +16,7 @@ defmodule Catex.Hugs.Hug do
   def changeset(hug, attrs) do
     hug
     |> cast(attrs, [])
-    |> cast_assoc(:participants)
+    |> cast_assoc(:participants, with: &HugParticipant.changeset/2)
     |> validate_required([])
   end
 end

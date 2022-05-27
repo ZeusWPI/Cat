@@ -1,4 +1,6 @@
 defmodule CatexWeb.Endpoint do
+  @moduledoc false
+
   use Phoenix.Endpoint, otp_app: :catex
 
   # The session will be stored in the cookie and signed,
@@ -29,6 +31,15 @@ defmodule CatexWeb.Endpoint do
     gzip: true,
     cache_control_for_etags: "public, max-age=86400",
     headers: [{"access-control-allow-origin", "*"}]
+  )
+
+  plug(
+    Plug.Static,
+    at: "/doc",
+    from: "doc",
+#    gzip: true,
+#    cache_control_for_etags: "public, max-age=86400",
+#    headers: [{"access-control-allow-origin", "*"}]
   )
 
   # Code reloading can be explicitly enabled under the

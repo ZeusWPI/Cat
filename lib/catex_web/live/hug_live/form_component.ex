@@ -1,4 +1,6 @@
 defmodule CatexWeb.HugLive.FormComponent do
+  @moduledoc false
+
   use CatexWeb, :live_component
 
   alias Catex.Hugs
@@ -9,61 +11,81 @@ defmodule CatexWeb.HugLive.FormComponent do
   @impl true
   def update(%{hug: hug} = assigns, socket) do
     changeset = Hugs.change_hug(hug)
-
     {
       :ok,
       socket
       |> assign(assigns)
       |> assign(:changeset, changeset)
       |> assign(
-        :users,
-        Users.list_users()
-        |> Enum.map(&{&1.name, &1.id})
-      )
+           :users,
+           Users.list_users()
+           |> Enum.filter(&(&1.id != assigns.current_user.id))
+           |> Enum.map(&{&1.name, &1.id})
+         )
       |> assign(
-        :status_opts,
-        [
-          {"Consent pending", "consent_pending"},
-          {"Consent given", "consent_given"},
-          {"Consent denied", "consent_denied"},
-          {"Hug pending", "hug_pending"},
-          {"Hug confirmed", "hug_confirmed"},
-          {"Hug denied", "hug_denied"}
-        ]
-      )
+           :status_opts,
+           [
+             {"Consent pending", "consent_pending"},
+             {"Consent given", "consent_given"},
+             {"Consent denied", "consent_denied"},
+             {"Hug pending", "hug_pending"},
+             {"Hug confirmed", "hug_confirmed"},
+             {"Hug denied", "hug_denied"}
+           ]
+         )
     }
+  end
+
+  defp prep_params(assigns, params) do
+    participants = Map.get(params, "participants", [])
+    participants = participants
+                   |> Map.values
+                   |> Enum.map(&(Map.put(&1, "status", :consent_pending)))
+                   |> Enum.concat(
+                        [
+                          %{user_id: assigns.current_user.id, status: "consent_given"}
+                        ]
+                      )
+    params = Map.put(params, "participants", participants)
   end
 
   @impl true
   def handle_event("add_participant", _params, socket) do
-    existing_participants = Map.get(socket.assigns.changeset.changes, :participants, socket.assigns.hug.participants)
+    existing_participants = Map.get(socket.assigns.hug, :participants, [])
 
     participants =
       existing_participants
-      |> Enum.concat([
-        %HugParticipant{temp_id: get_temp_id(), status: 'consent_pending'}
-        #        Hugs.change_participant(%HugParticipant{}) # NOTE temp_id
-      ])
+      |> Enum.concat(
+           [
+             #        %HugParticipant{temp_id: get_temp_id(), status: :consent_pending}
+             %HugParticipant{}
+             #        Hugs.change_participant(%HugParticipant{}) # NOTE temp_id
+           ]
+         )
 
     changeset =
       socket.assigns.changeset
       |> Ecto.Changeset.put_assoc(:participants, participants)
 
-    {:noreply, assign(socket, changeset: changeset)}
+    {
+      :noreply,
+      socket
+      |> assign(changeset: changeset)
+    }
   end
 
   # JUST TO GENERATE A RANDOM STRING
   defp get_temp_id,
-    do:
-      :crypto.strong_rand_bytes(5)
-      |> Base.url_encode64()
-      |> binary_part(0, 5)
+       do:
+         :crypto.strong_rand_bytes(5)
+         |> Base.url_encode64()
+         |> binary_part(0, 5)
 
   @impl true
-  def handle_event("validate", %{"hug" => hug_params}, socket) do
+  def handle_event("validate", %{"hug" => hug_params} = assigns, socket) do
     changeset =
       socket.assigns.hug
-      |> Hugs.change_hug(hug_params)
+      |> Hugs.change_hug(prep_params(assigns, hug_params))
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
@@ -89,6 +111,8 @@ defmodule CatexWeb.HugLive.FormComponent do
   end
 
   defp save_hug(socket, :new, hug_params) do
+    hug_params = prep_params(socket.assigns, hug_params)
+
     case Hugs.create_hug(hug_params) do
       {:ok, _hug} ->
         {

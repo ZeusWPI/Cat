@@ -1,4 +1,6 @@
 defmodule CatexWeb.ErrorView do
+  @moduledoc false
+
   use CatexWeb, :view
 
   # If you want to customize a particular status code

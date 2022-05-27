@@ -1,4 +1,6 @@
 defmodule CatexWeb.HugLive.Show do
+  @moduledoc false
+
   use CatexWeb, :live_view
 
   alias Catex.Hugs

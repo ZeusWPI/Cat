@@ -1,12 +1,17 @@
 defmodule Catex.Hugs.HugParticipant do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "hug_participants" do
-    belongs_to :hug, Catex.Hugs.Hug
-    belongs_to :user, Catex.Users.User
+  alias Catex.Hugs.Hug
+  alias Catex.Users.User
 
-    field :temp_id, :string, virtual: true
+  schema "hug_participants" do
+    belongs_to :hug, Hug
+    belongs_to :user, User
+
+#    field :temp_id, :string, virtual: true
 
     field :status,
           Ecto.Enum,
@@ -19,8 +24,10 @@ defmodule Catex.Hugs.HugParticipant do
   def changeset(hug_participant, attrs) do
     hug_participant
     # So its persisted
-    |> Map.put(:temp_id, hug_participant.temp_id || attrs["temp_id"])
-    |> cast(attrs, [:hug, :user, :status])
-    |> validate_required([:hug, :user, :status])
+#    |> Map.put(:temp_id, hug_participant.temp_id || attrs["temp_id"])
+    |> cast(attrs, [:user_id, :status])
+    |> validate_required([:user_id, :status])
+#    |> assoc_constraint(:hug)
+    |> assoc_constraint(:user)
   end
 end

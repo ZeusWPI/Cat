@@ -1,4 +1,6 @@
 defmodule CatexWeb.UserController do
+  @moduledoc false
+
   use CatexWeb, :controller
 
   alias Catex.Users

@@ -1,4 +1,6 @@
 defmodule CatexWeb.AuthController do
+  @moduledoc false
+
   use CatexWeb, :controller
   @moduledoc false
 

@@ -120,7 +120,6 @@ defmodule Catex.Users do
   def update_user_tokens(%User{} = user, access_token, refresh_token) do
     user
     |> User.changeset(%{access_token: access_token, refresh_token: refresh_token})
-    |> IO.inspect()
     |> Repo.update()
   end
 
@@ -156,7 +155,7 @@ defmodule Catex.Users do
       #        <% type in [:integer, :number] -> %>number <%= inspect name %>
       #        <% type in [:naive_datetime, :utc_datetime, :datetime, :date] -> %>date <%= inspect name %>
       #        <% type in [:boolean] -> %>boolean <%= inspect name %>
-      #        <% true -> %> #TODO add config for <%= name %> of type <%= type %>
+      #        <% true -> %>
       #      <% end %><% end %>
     end
   end

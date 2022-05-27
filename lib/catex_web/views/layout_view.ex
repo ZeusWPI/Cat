@@ -1,4 +1,6 @@
 defmodule CatexWeb.LayoutView do
+  @moduledoc false
+
   use CatexWeb, :view
 
   # Phoenix LiveDashboard is available only in development by default,
