@@ -36,7 +36,7 @@ defmodule CatexWeb.Endpoint do
   plug(
     Plug.Static,
     at: "/doc",
-    from: "doc",
+    from: "doc"
 #    gzip: true,
 #    cache_control_for_etags: "public, max-age=86400",
 #    headers: [{"access-control-allow-origin", "*"}]

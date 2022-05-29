@@ -5,7 +5,6 @@ defmodule CatexWeb.HugController do
 
   alias Catex.Hugs
   alias Catex.Users
-  alias Catex.Hugs.Hug
 
   alias CatexWeb.Utils.Combination
 

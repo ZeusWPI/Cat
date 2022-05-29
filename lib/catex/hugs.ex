@@ -124,7 +124,7 @@ defmodule Catex.Hugs do
     Repo.all(
       from h in Hug,
       join: hp in assoc(h, :participants),
-      where: h.id not in subquery(participants_unconfirmed),
+      where: h.id not in subquery(participants_unconfirmed()),
       preload: [
         participants: hp
       ]
@@ -168,11 +168,9 @@ defmodule Catex.Hugs do
 
   """
   def create_hug(attrs \\ %{}) do
-    hug =
-      %Hug{}
-      |> Hug.changeset(attrs)
-      |> PaperTrail.insert()
-      |> IO.inspect
+    %Hug{}
+    |> Hug.changeset(attrs)
+    |> PaperTrail.insert()
 
     #    multi =
     #      Ecto.Multi.new()

@@ -4,7 +4,6 @@ defmodule CatexWeb.HugLive.FormComponent do
   use CatexWeb, :live_component
 
   alias Catex.Hugs
-  alias Catex.Hugs.Hug
   alias Catex.Hugs.HugParticipant
   alias Catex.Users
 
@@ -46,9 +45,9 @@ defmodule CatexWeb.HugLive.FormComponent do
                           %{user_id: assigns.current_user.id, status: "consent_given"}
                         ]
                       )
-    params = params
-             |> Map.put("participants", participants)
-             |> Map.put("initiator_id", assigns.current_user.id)
+    params
+    |> Map.put("participants", participants)
+    |> Map.put("initiator_id", assigns.current_user.id)
   end
 
   @impl true

@@ -2,7 +2,7 @@ defmodule Catex.Users do
   @moduledoc """
   The Users context.
   """
-  import Torch.Helpers, only: [sort: 1, paginate: 4, strip_unset_booleans: 3]
+  import Torch.Helpers, only: [sort: 1, paginate: 4] #, strip_unset_booleans: 3]
   import Filtrex.Type.Config
 
   alias PaperTrail
