@@ -38,6 +38,29 @@ defmodule Catex.Hugs do
   alias Catex.Hugs.Hug
   alias Catex.Hugs.HugParticipant
 
+  def status_flow do
+    %{
+      consent_pending: [
+        {"Give consent for a hug", "consent_given"},
+        {"Don't give consent for a hug", "consent_denied"}
+      ],
+      consent_given: [
+        {"Revoke your consent", "consent_denied"},
+        {"Confirm that a hug took place", "hug_confirmed"},
+        {"Deny that a hug happened or will happen", "hug_denied"}
+      ],
+      consent_denied: [
+        {"Do give consent for a hug", "consent_given"}
+      ],
+      hug_pending: [
+        {"Confirm that a hug took place", "hug_confirmed"},
+        {"Deny that a hug happened or will happen", "hug_denied"}
+      ],
+      hug_confirmed: [],
+      hug_denied: []
+    }
+  end
+
   @doc """
   Returns the list of hugs.
 
@@ -52,6 +75,36 @@ defmodule Catex.Hugs do
       from h in Hug,
       join: hp in assoc(h, :participants),
       join: user in assoc(hp, :user),
+      preload: [
+        participants: [:user]
+      ]
+    )
+  end
+
+  @doc """
+  Returns the list of hugs that have the given user as a participant.
+  """
+  def list_hugs_from_user(from_user_id) do
+    #    Repo.all(
+    #      from h in Hug,
+    #      join: hp in assoc(h, :participants),
+    #      join: user in assoc(hp, :user),
+    #      where: ^from_user.id in subquery(
+    #
+    #      ),
+    #      preload: [
+    #        participants: [:user]
+    #      ]
+    #    )
+    from_user_hugs = from p in HugParticipant,
+                          join: user in assoc(p, :user),
+                          join: hug in assoc(p, :hug),
+                          where: user.id == ^from_user_id,
+                          select: hug.id
+
+    Repo.all(
+      from h in Hug,
+      where: h.id in subquery(from_user_hugs),
       preload: [
         participants: [:user]
       ]
@@ -166,6 +219,10 @@ defmodule Catex.Hugs do
 
   """
   def delete_hug(%Hug{} = hug) do
+    Repo.delete_all(
+      from p in HugParticipant,
+      where: p.hug_id == ^hug.id
+    )
     PaperTrail.delete(hug)
   end
 

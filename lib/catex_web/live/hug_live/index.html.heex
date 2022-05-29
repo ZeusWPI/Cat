@@ -14,27 +14,63 @@
   </.modal>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th><span>Participants</span></th>
-      <th><span>Actions</span></th>
-    </tr>
-  </thead>
-  <tbody id="hugs">
-    <%= for hug <- @hugs do %>
-      <tr id={"hug-#{hug.id}"}>
-        <td><%= hug.id %></td>
-        <td><%= hug.participants |> Enum.map(&("#{&1.user.name} (#{&1.status})")) |> Enum.join("; ") %></td>
-        <td>
-          <span><%= live_redirect "Show", to: Routes.hug_show_path(@socket, :show, hug) %></span>
-          <span><%= live_patch "Edit", to: Routes.hug_index_path(@socket, :edit, hug) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: hug.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="card">
+  <header class="card-header">
+    <p class="card-header-title">
+      Your hugs
+    </p>
+  </header>
+  <div class="card-content">
+    <div class="content">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th><span>Participants</span></th>
+            <th><span>Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="hugs">
+          <%= for hug <- @hugs do %>
+            <tr id={"hug-#{hug.id}"}>
+              <td><%= hug.id %></td>
+              <td><%= hug.participants |> Enum.map(&("#{&1.user.name} (#{&1.status})")) |> Enum.join("; ") %></td>
+              <td>
+                <!--<span><%= live_redirect "Show", to: Routes.hug_show_path(@socket, :show, hug) %></span>-->
+                <div class="field has-addons">
+                  <%= if (hug.participants |> Enum.filter(&(&1.user.id == @current_user.id)) |> hd).status not in [:hug_confirmed, :hug_denied] do %>
+                    <p class="control">
+                      <%= live_patch class: "button is-link is-small is-rounded is-outlined",
+                               to: Routes.hug_index_path(@socket, :edit, hug) do %>
+                        <span class="icon is-small">
+                          <i class="fas fa-pen-to-square"></i>
+                        </span>
+                        <span>Edit</span>
+                      <% end %>
+                    </p>
+                  <% end %>
+                  <p class="control">
+                    <%= link class: "button is-danger is-small is-rounded is-outlined",
+                             to: "#", phx_click: "delete", phx_value_id: hug.id, data: [confirm: "Are you sure?"] do %>
+                      <span class="icon is-small">
+                        <i class="fas fa-trash-can"></i>
+                      </span>
+                      <span>Delete</span>
+                    <% end %>
+                  </p>
+                </div>
 
-<span><%= live_patch "New Hug", to: Routes.hug_index_path(@socket, :new) %></span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer class="card-footer">
+    <%= live_patch "New Hug", to: Routes.hug_index_path(@socket, :new), class: "card-footer-item" %>
+  </footer>
+</div>
+
+<br/>
+

@@ -12,8 +12,8 @@ defmodule CatexWeb.HugLive.Index do
     {
       :ok,
       socket
-      |> assign(:hugs, list_hugs())
       |> assign_new(:current_user, fn -> Users.get_user!(user_id) end)
+      |> assign(:hugs, list_hugs(user_id))
     }
   end
 
@@ -37,7 +37,7 @@ defmodule CatexWeb.HugLive.Index do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Hugs")
-    |> assign(:hugs, list_hugs())
+    |> assign(:hugs, list_hugs(socket.assigns.current_user.id))
   end
 
   @impl true
@@ -45,10 +45,10 @@ defmodule CatexWeb.HugLive.Index do
     hug = Hugs.get_hug!(id)
     {:ok, _} = Hugs.delete_hug(hug)
 
-    {:noreply, assign(socket, :hugs, list_hugs())}
+    {:noreply, assign(socket, :hugs, list_hugs(socket.assigns.current_user.id))}
   end
 
-  defp list_hugs do
-    Hugs.list_hugs()
+  defp list_hugs(user_id) do
+    Hugs.list_hugs_from_user(user_id)
   end
 end

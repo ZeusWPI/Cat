@@ -1,5 +1,5 @@
 <div>
-  <h2><%= @title %></h2>
+  <h3><%= @title %></h3>
 
   <.form
     let={f}
@@ -8,46 +8,60 @@
     phx-target={@myself}
     phx-submit="save">
   <!--phx-change="validate"-->
-  <div>
-    <h4>Participants</h4>
 
     <%= inputs_for f, :participants, fn v -> %>
-    <div class="row">
-      <div class="column column-25">
-      <%= label v, :user_id %>
-      <%= select(v, :user_id, @users) %>
-      <%= error_tag v, :user_id %>
+    <div class="columns">
+      <div class="column is-4">
+        <div class="field">
+          <%= label v, :user_id, class: "label" %>
+          <%= if @action == :edit do %>
+            <p><%= v.data.user.name %></p>
+          <% else %>
+            <div class="control">
+              <div class="select">
+                <%= select(v, :user_id, @users) %>
+              </div>
+            </div>
+          <% end %>
+          <%= error_tag v, :user_id %>
+        </div>
       </div>
 
-      <div class="column column-40">
-        <div class="row">
-          <div class="column">
-            <%= label v, :status %>
-          </div>
-          <div class="column">
-            <p><%= String.replace(Atom.to_string(v.data.status), "_", " ") %></p>
-          </div>
-        </div>
+      <div class="column is-6">
+        <%= label v, :status, class: "label" %>
+        <p><%= String.replace(Atom.to_string(v.data.status), "_", " ") %></p>
         <%= if @action == :edit and v.data.user.id == @current_user.id do %>
           <%= if ! (Map.get(@status_opts, v.data.status) |> Enum.empty?()) do %>
-            <%= select(v, :status, Map.get(@status_opts, v.data.status)) %>
+            <div class="select">
+              <%= select(v, :status, Map.get(@status_opts, v.data.status)) %>
+            </div>
             <%= error_tag v, :status %>
           <% end %>
         <% end %>
       </div>
 
-      <!--
-      <%= label v, :hug_id %>
-      <%= error_tag v, :hug_id %>
+      <!-- TODO Add this back
+      <div class="column">
+        <button class="button is-small is-danger is-inverted">
+         <span class="icon is-small is-left">
+           <i class="fas fa-trash-can"></i>
+         </span>
+        </button>
+      </div>
       -->
     </div>
     <% end %>
 
-    <a href="#" phx-target={@myself} phx-click="add_participant">Add a participant</a>
+    <div class="field">
+      <div class="control">
+        <a href="#" phx-target={@myself} phx-click="add_participant" class="button is-small">Add a participant</a>
+      </div>
+    </div>
 
-  </div>
-  <div>
-      <%= submit "Save", phx_disable_with: "Saving..." %>
+    <div class="field">
+      <div class="control">
+        <%= submit "Save", phx_disable_with: "Saving...", class: "button" %>
+      </div>
     </div>
   </.form>
 </div>
