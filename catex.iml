@@ -301,5 +301,6 @@
     <orderEntry type="library" name="castore" level="project" />
     <orderEntry type="library" name="cowboy" level="project" />
     <orderEntry type="library" name="cowboy_telemetry" level="project" />
+    <orderEntry type="library" name="meck" level="project" />
   </component>
 </module>

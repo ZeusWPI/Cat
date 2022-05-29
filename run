@@ -105,39 +105,10 @@ function mix:outdated {
   mix hex.outdated
 }
 
-function yarn:install {
-  # Install yarn dependencies and write lock file
-  _build_run_down js yarn install
-}
-
-function yarn:outdated {
-  # List any installed packages that are outdated
-  _dc js yarn outdated
-}
-
-function yarn:build:js {
-  # Build JS assets, this is meant to be run from within the assets container
-  mkdir -p ../priv/static/js
-  node esbuild.config.js
-}
-
-function yarn:build:css {
-  # Build CSS assets, this is meant to be run from within the assets container
-  local args=()
-
-  if [ "${NODE_ENV}" == "production" ]; then
-    args=(--minify)
-  else
-    args=(--watch)
-  fi
-
-  mkdir -p ../priv/static/css
-  tailwindcss --postcss -i css/app.css -o ../priv/static/css/app.css "${args[@]}"
-}
-
 function prod:migrate {
   # Run database migrations in production
-  cmd bin/catex eval "Catex.Release.migrate"
+#  cmd bin/catex eval "Catex.Release.migrate"
+  cmd bin/migrate
 }
 
 function prod:remote {
