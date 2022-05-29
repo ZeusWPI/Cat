@@ -2,12 +2,6 @@ defmodule CatexWeb.AuthController do
   @moduledoc false
 
   use CatexWeb, :controller
-  @moduledoc false
-
-  alias OAuth2.Client
-  alias OAuth2.Strategy.AuthCode
-  alias OAuth2.AccessToken
-  alias Poison.Parser
 
   alias Catex.Users
 
