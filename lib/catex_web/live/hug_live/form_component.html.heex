@@ -9,24 +9,37 @@
     phx-submit="save">
   <!--phx-change="validate"-->
   <div>
-    <p class="mt-4 mb-2 font-bold">Participants</p>
+    <h4>Participants</h4>
 
     <%= inputs_for f, :participants, fn v -> %>
-    <div class="flex flex-wrap -mx-1 overflow-hidden">
-
+    <div class="row">
+      <div class="column column-25">
       <%= label v, :user_id %>
       <%= select(v, :user_id, @users) %>
       <%= error_tag v, :user_id %>
+      </div>
 
-      <%= if @action == "edit" do %>
-        <%= select(v, :status, @status_opts) %>
-      <% end %>
+      <div class="column column-40">
+        <div class="row">
+          <div class="column">
+            <%= label v, :status %>
+          </div>
+          <div class="column">
+            <p><%= String.replace(Atom.to_string(v.data.status), "_", " ") %></p>
+          </div>
+        </div>
+        <%= if @action == :edit and v.data.user.id == @current_user.id do %>
+          <%= if ! (Map.get(@status_opts, v.data.status) |> Enum.empty?()) do %>
+            <%= select(v, :status, Map.get(@status_opts, v.data.status)) %>
+            <%= error_tag v, :status %>
+          <% end %>
+        <% end %>
+      </div>
 
+      <!--
       <%= label v, :hug_id %>
       <%= error_tag v, :hug_id %>
-
-      <%= label v, :status %>
-      <%= error_tag v, :status %>
+      -->
     </div>
     <% end %>
 

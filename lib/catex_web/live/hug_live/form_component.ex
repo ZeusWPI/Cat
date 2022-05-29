@@ -24,14 +24,34 @@ defmodule CatexWeb.HugLive.FormComponent do
          )
       |> assign(
            :status_opts,
-           [
-             {"Consent pending", "consent_pending"},
-             {"Consent given", "consent_given"},
-             {"Consent denied", "consent_denied"},
-             {"Hug pending", "hug_pending"},
-             {"Hug confirmed", "hug_confirmed"},
-             {"Hug denied", "hug_denied"}
-           ]
+           #           [
+           #             {"Consent pending", "consent_pending"},
+           #             {"Consent given", "consent_given"},
+           #             {"Consent denied", "consent_denied"},
+           #             {"Hug pending", "hug_pending"},
+           #             {"Hug confirmed", "hug_confirmed"},
+           #             {"Hug denied", "hug_denied"}
+           #           ],
+           %{
+             consent_pending: [
+               {"Give consent for a hug", "consent_given"},
+               {"Don't give consent for a hug", "consent_denied"}
+             ],
+             consent_given: [
+               {"Revoke your consent", "consent_denied"},
+               {"Confirm that a hug took place", "hug_confirmed"},
+               {"Deny that a hug happened or will happen", "hug_denied"}
+             ],
+             consent_denied: [
+               {"Do give consent for a hug", "consent_given"}
+             ],
+             hug_pending: [
+               {"Confirm that a hug took place", "hug_confirmed"},
+               {"Deny that a hug happened or will happen", "hug_denied"}
+             ],
+             hug_confirmed: [],
+             hug_denied: []
+           }
          )
     }
   end
