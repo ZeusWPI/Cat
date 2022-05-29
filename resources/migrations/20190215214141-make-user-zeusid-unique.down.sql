@@ -1,3 +1,0 @@
-ALTER TABLE users
-  DROP INDEX UC_user;
-

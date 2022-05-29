@@ -8,7 +8,6 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-
 ## Production
 
 Copy `.env.template` to `.env` and set the env variables.

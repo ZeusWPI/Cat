@@ -20,12 +20,6 @@ if System.get_env("PHX_SERVER") do
   config :catex, CatexWeb.Endpoint, server: true
 end
 
-scheme = System.get_env("URL_SCHEME", "https")
-url_host = System.fetch_env!("URL_HOST")
-port = System.get_env("URL_PORT", "443")
-
-base_url = "#{scheme}://#{url_host}:#{port}"
-
 if config_env() == :prod do
   System.get_env("DATABASE_URL")
   || (
@@ -65,6 +59,10 @@ if config_env() == :prod do
       environment variable SECRET_KEY_BASE is missing.
       You can generate one by calling: mix phx.gen.secret
       """
+
+  scheme = System.get_env("URL_SCHEME", "https")
+  url_host = System.fetch_env!("URL_HOST")
+  port = System.get_env("URL_PORT", "443")
 
   config :catex,
          CatexWeb.Endpoint,
