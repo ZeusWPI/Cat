@@ -5,12 +5,15 @@ defmodule Catex.MixProject do
     [
       app: :catex,
       version: "0.1.0",
-      elixir: "~> 1.12",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      test_coverage: [
+        tool: ExCoveralls
+      ],
       dialyzer: [
         plt_add_deps: :transitive
       ],
@@ -69,6 +72,8 @@ defmodule Catex.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:oauth2, "~> 2.0"},
+      # Test coverage
+      {:excoveralls, "0.14.5", only: [:dev, :test]},
       # static code analysis
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       # Static code analysis with security focus

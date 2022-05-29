@@ -1,0 +1,9 @@
+.git/
+assets/node_modules/
+priv/static/
+_build/
+
+.dockerignore
+.env*
+!.env.example
+docker-compose.override.yml
