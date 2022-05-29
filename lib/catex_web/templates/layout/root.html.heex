@@ -20,13 +20,17 @@
       <section class="container">
         <nav>
           <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
+            <%= if @current_user != nil and @current_user.admin do %>
+              <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+                <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
+              <% end %>
+              <li><%= link "Admin", to: Routes.admin_user_path(@conn, :index) %></li>
+              <br/>
             <% end %>
-            <li><%= link "Admin", to: Routes.admin_user_path(@conn, :index) %></li>
             <%= if @current_user == nil do %>
               <li><%= link "Login", to: Routes.auth_path(@conn, :login) %></li>
             <% else %>
+              <li><%= link "Manage hugs", to: Routes.hug_index_path(@conn, :index) %></li>
               <li><%= link "Logout", to: Routes.auth_path(@conn, :logout) %></li>
             <% end %>
           </ul>

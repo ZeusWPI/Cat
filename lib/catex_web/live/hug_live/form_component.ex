@@ -39,7 +39,6 @@ defmodule CatexWeb.HugLive.FormComponent do
 
   defp prep_params(assigns, params) do
     participants = Map.get(params, "participants", [])
-    participants = participants
                    |> Map.values
                    |> Enum.map(&(Map.put(&1, "status", :consent_pending)))
                    |> Enum.concat(
@@ -47,7 +46,9 @@ defmodule CatexWeb.HugLive.FormComponent do
                           %{user_id: assigns.current_user.id, status: "consent_given"}
                         ]
                       )
-    params = Map.put(params, "participants", participants)
+    params = params
+             |> Map.put("participants", participants)
+             |> Map.put("initiator_id", assigns.current_user.id)
   end
 
   @impl true

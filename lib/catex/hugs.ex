@@ -305,6 +305,7 @@ defmodule Catex.Hugs do
 
   defp filter_config(:hugs) do
     defconfig do
+      number :initiator_id
     end
   end
 end
