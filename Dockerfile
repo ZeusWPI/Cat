@@ -95,4 +95,5 @@ USER nobody
 
 EXPOSE 8000
 
-CMD ["bin/catex", "start"]
+#CMD ["bin/catex", "start"]
+CMD ["/app/bin/server"]

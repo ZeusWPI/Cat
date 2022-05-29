@@ -1,5 +1,10 @@
 import Config
 
+config :catex,
+       oauth2_client_id: System.get_env("OAUTH2_CLIENT_ID", "tomtest"),
+       oauth2_client_secret: System.get_env("OAUTH2_CLIENT_ID", "blargh"),
+       oauth2_app_url: "http://localhost:4000"
+
 # Configure your database
 config :catex, Catex.Repo,
   username: "postgres",

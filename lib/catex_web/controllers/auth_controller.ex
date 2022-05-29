@@ -4,19 +4,22 @@ defmodule CatexWeb.AuthController do
   use CatexWeb, :controller
 
   alias Catex.Users
+  alias Application
 
   @client OAuth2.Client.new(
             # default
             strategy: OAuth2.Strategy.AuthCode,
-            client_id: "tomtest",
-            client_secret: "blargh",
+            client_id: Application.get_env(:catex, :oauth2_client_id),
+            client_secret: Application.get_env(:catex, :oauth2_client_secret),
             site: "https://adams.ugent.be",
-            redirect_uri: "http://localhost:4000/auth/callback",
+            redirect_uri: "#{Application.get_env(:catex, :oauth2_app_url)}/auth/callback",
             token_url: "https://adams.ugent.be/oauth/oauth2/token"
           )
           |> OAuth2.Client.put_serializer("application/json", Jason)
 
   def login(conn, _params) do
+    IO.inspect(@client)
+    IO.inspect(@client.client_id)
     redirect(conn, external: OAuth2.Client.authorize_url!(@client))
   end
 
@@ -31,13 +34,15 @@ defmodule CatexWeb.AuthController do
     user = Users.get_user_by_zeus_id(resource["id"])
 
     if user == nil do
-      Users.create_user(%{
-        name: resource["username"],
-        zeus_id: resource["id"],
-        admin: false,
-        access_token: client.token.access_token,
-        refresh_token: client.token.refresh_token
-      })
+      Users.create_user(
+        %{
+          name: resource["username"],
+          zeus_id: resource["id"],
+          admin: false,
+          access_token: client.token.access_token,
+          refresh_token: client.token.refresh_token
+        }
+      )
     else
       Users.update_user_tokens(user, client.token.access_token, client.token.refresh_token)
     end

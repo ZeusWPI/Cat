@@ -1,5 +1,10 @@
 import Config
 
+config :catex,
+       oauth2_client_id: "<FIXME>",
+       oauth2_client_secret: "<FIXME>",
+       oauth2_app_url: "<FIXME>" # https://example.com
+
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
