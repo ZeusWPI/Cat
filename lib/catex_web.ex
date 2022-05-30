@@ -22,7 +22,6 @@ defmodule CatexWeb do
       use Phoenix.Controller, namespace: CatexWeb
 
       import Plug.Conn
-      import CatexWeb.Gettext
       alias CatexWeb.Router.Helpers, as: Routes
     end
   end
@@ -82,7 +81,6 @@ defmodule CatexWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import CatexWeb.Gettext
     end
   end
 
@@ -99,7 +97,6 @@ defmodule CatexWeb do
       import Phoenix.View
 
       import CatexWeb.ErrorHelpers
-      import CatexWeb.Gettext
       alias CatexWeb.Router.Helpers, as: Routes
     end
   end
