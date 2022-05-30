@@ -81,6 +81,8 @@ defmodule Catex.MixProject do
       # Documentation generation
       {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
+      # To migrate the old database
+      {:myxql, ">= 0.0.0"}
     ]
   end
 

@@ -302,5 +302,7 @@
     <orderEntry type="library" name="cowboy" level="project" />
     <orderEntry type="library" name="cowboy_telemetry" level="project" />
     <orderEntry type="library" name="meck" level="project" />
+    <orderEntry type="library" name="geo" level="project" />
+    <orderEntry type="library" name="binpp" level="project" />
   </component>
 </module>
