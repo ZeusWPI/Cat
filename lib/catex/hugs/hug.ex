@@ -31,10 +31,4 @@ defmodule Catex.Hugs.Hug do
     |> assoc_constraint(:initiator)
     |> cast_assoc(:participants, with: &HugParticipant.create_changeset/2)
   end
-
-  def update_changeset(hug, attrs) do
-    hug
-    |> cast(attrs, [])
-    |> cast_assoc(:participants, with: &HugParticipant.update_changeset/2)
-  end
 end
