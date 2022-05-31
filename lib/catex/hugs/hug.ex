@@ -5,11 +5,12 @@ defmodule Catex.Hugs.Hug do
   import Ecto.Changeset
 
   alias Catex.Hugs.HugParticipant
+  alias Catex.Users.User
 
   schema "hugs" do
     has_many :participants, HugParticipant
 
-    belongs_to :user, User, foreign_key: :initiator_id
+    belongs_to :initiator, User
 
 
     timestamps()
@@ -21,5 +22,19 @@ defmodule Catex.Hugs.Hug do
     |> cast(attrs, [:initiator_id])
     |> cast_assoc(:participants, with: &HugParticipant.changeset/2)
     |> validate_required([:initiator_id])
+  end
+
+  def create_changeset(hug, attrs) do
+    hug
+    |> cast(attrs, [:initiator_id])
+    |> cast_assoc(:initiator)
+    |> assoc_constraint(:initiator)
+    |> cast_assoc(:participants, with: &HugParticipant.create_changeset/2)
+  end
+
+  def update_changeset(hug, attrs) do
+    hug
+    |> cast(attrs, [])
+    |> cast_assoc(:participants, with: &HugParticipant.update_changeset/2)
   end
 end

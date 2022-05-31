@@ -167,23 +167,21 @@ defmodule Catex.Hugs do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_hug(attrs \\ %{}) do
+  def create_hug(initiator, attrs \\ %{}) do
     %Hug{}
-    |> Hug.changeset(attrs)
+    |> Hug.create_changeset(
+         attrs
+         |> Map.put("initiator_id", initiator.id)
+         |> Map.update!(
+              "participants",
+              &(&1
+                |> Map.values
+                |> Enum.map(fn p -> Map.put(p, "status", :consent_pending) end)
+                |> Enum.concat([%{"user_id" => initiator.id, "status" => :consent_given}])
+                )
+            )
+       )
     |> PaperTrail.insert()
-
-    #    multi =
-    #      Ecto.Multi.new()
-    #      |> Ecto.Multi.insert(:hug, hug)
-    #
-    #    multi
-    #    |> Ecto.Multi.merge(
-    #         fn %{hug: hug} ->
-    #           Ecto.Multi.new()
-    #           |> Ecto.Multi.insert(:participants, Ecto.build_assoc(hug, :participants))
-    #         end
-    #       )
-    #    |> Catex.Repo.transaction()
   end
 
   @doc """

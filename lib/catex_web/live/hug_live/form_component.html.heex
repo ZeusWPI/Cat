@@ -6,50 +6,53 @@
     for={@changeset}
     id="hug-form"
     phx-target={@myself}
-    phx-submit="save">
-  <!--phx-change="validate"-->
+    phx-submit="save"
+    phx-change="validate">
 
-    <%= inputs_for f, :participants, fn v -> %>
-    <div class="columns">
-      <div class="column is-4">
-        <div class="field">
-          <%= label v, :user_id, class: "label" %>
-          <%= if @action == :edit do %>
-            <p><%= v.data.user.name %></p>
-          <% else %>
-            <div class="control">
-              <div class="select">
-                <%= select(v, :user_id, @users) %>
+    <%= inputs_for f, :participants, fn participant_form -> %>
+      <%= text_input participant_form, :temp_id, hidden: true %>
+      <div class="columns">
+        <div class="column is-4">
+          <div class="field">
+            <%= label participant_form, :user_id, class: "label" %>
+            <%= if @action == :edit do %>
+              <p><%= participant_form.data.user.name %></p>
+            <% else %>
+              <div class="control">
+                <div class="select">
+                  <%= select(participant_form, :user_id, @users) %>
+                </div>
               </div>
-            </div>
-          <% end %>
-          <%= error_tag v, :user_id %>
+            <% end %>
+            <%= error_tag participant_form, :user_id %>
+          </div>
         </div>
-      </div>
 
-      <div class="column is-6">
-        <%= label v, :status, class: "label" %>
-        <p><%= String.replace(Atom.to_string(v.data.status), "_", " ") %></p>
-        <%= if @action == :edit and v.data.user.id == @current_user.id do %>
-          <%= if ! (Map.get(@status_opts, v.data.status) |> Enum.empty?()) do %>
-            <div class="select">
-              <%= select(v, :status, Map.get(@status_opts, v.data.status)) %>
-            </div>
-            <%= error_tag v, :status %>
+        <%= if @action == :edit do %>
+        <div class="column is-6">
+          <%= label participant_form, :status, class: "label" %>
+          <p><%= String.replace(Atom.to_string(participant_form.data.status), "_", " ") %></p>
+          <%= if participant_form.data.user.id == @current_user.id do %>
+            <%= if ! (Map.get(@status_opts, participant_form.data.status) |> Enum.empty?()) do %>
+              <div class="select">
+                <%= select(participant_form, :status, Map.get(@status_opts, participant_form.data.status)) %>
+              </div>
+              <%= error_tag participant_form, :status %>
+            <% end %>
           <% end %>
+        </div>
         <% end %>
-      </div>
 
-      <!-- TODO Add this back
-      <div class="column">
-        <button class="button is-small is-danger is-inverted">
-         <span class="icon is-small is-left">
-           <i class="fas fa-trash-can"></i>
-         </span>
-        </button>
+        <!-- TODO Add this back
+        <div class="column">
+          <button class="button is-small is-danger is-inverted">
+           <span class="icon is-small is-left">
+             <i class="fas fa-trash-can"></i>
+           </span>
+          </button>
+        </div>
+        -->
       </div>
-      -->
-    </div>
     <% end %>
 
     <div class="field">

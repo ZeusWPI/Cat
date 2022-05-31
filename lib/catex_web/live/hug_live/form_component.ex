@@ -36,37 +36,15 @@ defmodule CatexWeb.HugLive.FormComponent do
     }
   end
 
-  defp prep_params(assigns, params) do
-    participants = Map.get(params, "participants", [])
-                   |> Map.values
-                   |> Enum.map(&(Map.put(&1, "status", :consent_pending)))
-                   |> Enum.concat(
-                        [
-                          %{user_id: assigns.current_user.id, status: "consent_given"}
-                        ]
-                      )
-    params
-    |> Map.put("participants", participants)
-    |> Map.put("initiator_id", assigns.current_user.id)
-  end
-
   @impl true
   def handle_event("add_participant", _params, socket) do
-    existing_participants = Map.get(socket.assigns.hug, :participants, [])
-
     participants =
-      existing_participants
-      |> Enum.concat(
-           [
-             #        %HugParticipant{temp_id: get_temp_id(), status: :consent_pending}
-             %HugParticipant{}
-             #        Hugs.change_participant(%HugParticipant{}) # NOTE temp_id
-           ]
-         )
-
-    changeset =
       socket.assigns.changeset
-      |> Ecto.Changeset.put_assoc(:participants, participants)
+      |> Ecto.Changeset.get_field(:participants, [])
+        # The temp_id makes sure it does not overwrite the rest
+      |> Enum.concat([%HugParticipant{temp_id: get_temp_id(), status: :consent_pending}])
+
+    changeset = Ecto.Changeset.put_assoc(socket.assigns.changeset, :participants, participants)
 
     {
       :noreply,
@@ -86,7 +64,7 @@ defmodule CatexWeb.HugLive.FormComponent do
   def handle_event("validate", %{"hug" => hug_params} = assigns, socket) do
     changeset =
       socket.assigns.hug
-      |> Hugs.change_hug(prep_params(assigns, hug_params))
+      |> Hugs.change_hug(hug_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
@@ -112,9 +90,7 @@ defmodule CatexWeb.HugLive.FormComponent do
   end
 
   defp save_hug(socket, :new, hug_params) do
-    hug_params = prep_params(socket.assigns, hug_params)
-
-    case Hugs.create_hug(hug_params) do
+    case Hugs.create_hug(socket.assigns.current_user, hug_params) do
       {:ok, _hug} ->
         {
           :noreply,

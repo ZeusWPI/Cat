@@ -11,7 +11,7 @@ defmodule Catex.Hugs.HugParticipant do
     belongs_to :hug, Hug
     belongs_to :user, User
 
-#    field :temp_id, :string, virtual: true
+    field :temp_id, :string, virtual: true
 
     field :status,
           Ecto.Enum,
@@ -24,10 +24,16 @@ defmodule Catex.Hugs.HugParticipant do
   def changeset(hug_participant, attrs) do
     hug_participant
     # So its persisted
-#    |> Map.put(:temp_id, hug_participant.temp_id || attrs["temp_id"])
-    |> cast(attrs, [:user_id, :status])
+    |> Map.put(:temp_id, hug_participant.temp_id || attrs["temp_id"])
+    |> cast(attrs, [:user_id, :status, :temp_id])
     |> validate_required([:user_id, :status])
-#    |> assoc_constraint(:hug)
+    |> assoc_constraint(:user)
+  end
+
+  def create_changeset(hug_participant, attrs) do
+    hug_participant
+    |> cast(attrs, [:user_id, :temp_id, :status])
+    |> validate_required([:user_id, :status])
     |> assoc_constraint(:user)
   end
 end
