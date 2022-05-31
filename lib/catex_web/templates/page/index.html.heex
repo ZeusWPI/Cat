@@ -1,0 +1,106 @@
+<!--<section class="phx-hero">
+    <h1>Welcome to cat</h1>
+    <p>Hugs are the peace of mind. And just nice to give and get :)</p>
+</section>-->
+
+<section class="section">
+        <div id="view">
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </div>
+</section>
+
+<script
+        type="text/javascript"
+        src="https://unpkg.com/vis-network@9.1.2/standalone/umd/vis-network.min.js"
+        <!--src="https://unpkg.com/vis-network@9.1.2/standalone/umd/vis-network.js"-->
+></script>
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            var responseData = this.responseText;
+            console.log(responseData);
+            loadGraph(JSON.parse(responseData));
+        }
+    };
+    xhttp.open("GET", "api/hugs", true);
+    xhttp.send();
+
+
+    function loadGraph(request_data) {
+        console.log(request_data);
+        let nodes = new vis.DataSet(
+            request_data["nodes"].map(node => {
+                return {
+                    id: node.index,
+                    label: node.name.slice(0, 30) + (node.name.length > 30 ? "..." : ""),
+                    color: 'hsl(' + Math.floor(Math.random() * 361) + ',50%,75%)'
+                };
+            })
+        );
+        let edges = new vis.DataSet(
+            request_data["links"].map(link => {
+                return {
+                    from: link.source,
+                    to: link.target
+                };
+            })
+        );
+
+        let container = document.getElementById("view");
+        let data = {
+            nodes: nodes,
+            edges: edges
+        };
+        console.log(data);
+        let options = {};
+        let network = new vis.Network(container, data, options);
+        network.stabilize(50)
+    }
+
+    /*
+        window.onload = function mountComponents() {
+            let spec = {
+                "width
+            }
+        }
+    */
+
+</script>
+<style>
+    .loader-container {
+        width: 700px;
+        height: 425px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loader {
+        border: 4px solid #f3f3f3; /* Light grey */
+        border-top: 4px solid #3498db; /* Blue */
+        border-radius: 50%; /*to make it a circle*/
+        width: 60px;
+        height: 60px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    #view {
+        height: 80vh;
+        max-height: 100%;
+        width: 80vw;
+        border: 1px solid lightgray;
+    }
+</style>
